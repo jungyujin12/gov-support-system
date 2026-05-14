@@ -1,0 +1,18 @@
+# ============================================================
+#  requirements.txt — 필요 패키지 목록
+#  설치 명령: pip install -r requirements.txt
+# ============================================================
+
+# HTTP 요청
+requests==2.31.0
+
+# HTML 파싱 (교육부 크롤링)
+beautifulsoup4==4.12.3
+lxml==5.1.0          # HTML 파서 (bs4 선택 옵션)
+
+# 데이터 처리
+pandas==2.2.0
+openpyxl==3.1.2      # Excel 저장
+
+# 환경변수 관리
+python-dotenv==1.0.1
