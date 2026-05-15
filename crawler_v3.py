@@ -225,21 +225,21 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
             # totCnt는 각 item 안에 있음
             total = int(items[0].get("totCnt", 0)) if items else 0
 
-            if isinstance(items, dict):
-                items = [items]
             if not items:
                 logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
                 break
 
             page_results = []
             for item in items:
-                # bizinfo API 필드명 (pblancNm, jrsdInsttNm, rcptEndDd, pblancId)
-                title = str(item.get("pblancNm",  item.get("title", ""))).strip()
+                # bizinfo API 실제 필드명 (문서 기준)
+                title    = str(item.get("pblancNm", item.get("title", ""))).strip()
                 if not title:
                     continue
-                ministry = str(item.get("jrsdInsttNm", item.get("org", ""))).strip()
-                deadline = str(item.get("rcptEndDd",   item.get("endDate", ""))).strip()
-                pid      = str(item.get("pblancId",    item.get("id", ""))).strip()
+                ministry = str(item.get("jrsdInsttNm", item.get("author", ""))).strip()
+                pid      = str(item.get("pblancId",    item.get("seq", ""))).strip()
+                # 마감일: reqstBeginEndDe = "20220727 ~ 20220930" → 종료일 추출
+                period   = str(item.get("reqstBeginEndDe", item.get("reqstDt", ""))).strip()
+                deadline = period.split("~")[-1].strip() if "~" in period else period
 
                 # 상세링크
                 if pid:
