@@ -76,6 +76,7 @@ ARCHIVE_DIR.mkdir(exist_ok=True)
 class Config:
     BIZINFO_API_KEY:   str = os.environ.get("BIZINFO_API_KEY", "")
     KSTARTUP_API_KEY:  str = os.environ.get("KSTARTUP_API_KEY", "")
+    MSIT_API_KEY:      str = os.environ.get("MSIT_API_KEY", "")
     SLACK_WEBHOOK_URL: str = os.environ.get("SLACK_WEBHOOK_URL", "")
 
     # bizinfo.go.kr 자체 API (data.go.kr 경유 아님)
@@ -392,6 +393,89 @@ def _extract_date(row) -> str:
 #      sources.json에서 enabled:true로 바꾸고
 #      아래 함수를 구현하면 자동으로 수집됨
 # ──────────────────────────────────────────────
+def handler_msit(source_cfg: dict) -> list[dict]:
+    """
+    과학기술정보통신부 사업공고 API
+    엔드포인트: http://apis.data.go.kr/1721000/msitannouncementinfo/businessAnnouncMentList
+    응답 필드: subject, viewUrl, deptName, pressDt
+    """
+    api_key = os.environ.get("MSIT_API_KEY", "")
+    if not api_key:
+        logger.warning("⚠️  MSIT_API_KEY 없음 → 과기부 건너뜀")
+        return []
+
+    pages = source_cfg.get("pages", 10)
+    rows  = source_cfg.get("rows", 100)
+    URL   = "http://apis.data.go.kr/1721000/msitannouncementinfo/businessAnnouncMentList"
+    logger.info(f"🔬 과기부 사업공고 API ({pages}페이지 × {rows}건)")
+    results = []
+
+    for page in range(1, pages + 1):
+        params = {
+            "serviceKey":  api_key,
+            "numOfRows":   rows,
+            "pageNo":      page,
+            "returnType":  "json",
+        }
+        res = safe_get(URL, params=params)
+        if not res:
+            continue
+
+        try:
+            data  = res.json()
+            body  = data.get("response", data).get("body", data)
+            items_raw = body.get("items", {})
+
+            # items가 dict인 경우 item 키 추출
+            if isinstance(items_raw, dict):
+                items = items_raw.get("item", [])
+            elif isinstance(items_raw, list):
+                items = items_raw
+            else:
+                items = []
+
+            if isinstance(items, dict):
+                items = [items]
+            if not items:
+                logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
+                break
+
+            total = int(body.get("totalCount", 0))
+            page_results = []
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                title = str(item.get("subject", "")).strip()
+                if not title:
+                    continue
+                url      = str(item.get("viewUrl", "")).strip()
+                dept     = str(item.get("deptName", "과학기술정보통신부")).strip()
+                press_dt = str(item.get("pressDt", "")).strip()  # 게시일 (마감일 없음)
+
+                page_results.append({
+                    "소스":     "과기부",
+                    "사업명":   title,
+                    "주관부처": dept or "과학기술정보통신부",
+                    "마감일":   normalize_date(press_dt),  # 게시일 사용 (마감일 없음)
+                    "상세링크": url or "https://www.msit.go.kr",
+                })
+
+            results.extend(page_results)
+            logger.info(f"   └ {page}페이지: {len(page_results)}건 (전체 {total}건)")
+
+            if not page_results or (total > 0 and page * rows >= total):
+                break
+
+        except Exception as e:
+            logger.error(f"   └ {page}페이지 파싱 오류: {e}")
+            logger.debug(f"   응답: {res.text[:300]}")
+
+        time.sleep(Config.PAGE_DELAY)
+
+    logger.info(f"   ✅ 과기부 합계: {len(results)}건")
+    return results
+
+
 def handler_iris(source_cfg: dict) -> list[dict]:
     logger.info("ℹ️  IRIS 핸들러 미구현")
     return []
@@ -505,6 +589,7 @@ HANDLER_MAP = {
     "기업마당":       handler_bizinfo,
     "교육부_사업공고": handler_moe,
     "교육부_공지사항": handler_moe,
+    "과기부":         handler_msit,
     "IRIS":           handler_iris,
     "NRF":            handler_nrf,
     "K-Startup":      handler_kstartup,
