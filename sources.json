@@ -1,0 +1,76 @@
+[
+  {
+    "source": "기업마당",
+    "enabled": true,
+    "description": "중소벤처기업부 기업마당 API",
+    "type": "api",
+    "url": "https://www.bizinfo.go.kr",
+    "pages": 5,
+    "note": "API 키 필요 (BIZINFO_API_KEY)"
+  },
+  {
+    "source": "교육부_사업공고",
+    "enabled": true,
+    "description": "교육부 사업공고 게시판",
+    "type": "crawl",
+    "url": "https://www.moe.go.kr/boardCnts/listRenew.do?boardID=72761",
+    "pages": 5,
+    "board_id": "72761",
+    "note": ""
+  },
+  {
+    "source": "교육부_공지사항",
+    "enabled": true,
+    "description": "교육부 공지사항 게시판",
+    "type": "crawl",
+    "url": "https://www.moe.go.kr/boardCnts/listRenew.do?boardID=316",
+    "pages": 3,
+    "board_id": "316",
+    "note": ""
+  },
+  {
+    "source": "IRIS",
+    "enabled": false,
+    "description": "범부처통합연구지원시스템",
+    "type": "crawl",
+    "url": "https://www.iris.go.kr",
+    "pages": 3,
+    "note": "구현 예정"
+  },
+  {
+    "source": "NRF",
+    "enabled": false,
+    "description": "한국연구재단",
+    "type": "crawl",
+    "url": "https://www.nrf.re.kr",
+    "pages": 3,
+    "note": "구현 예정"
+  },
+  {
+    "source": "K-Startup",
+    "enabled": false,
+    "description": "창업진흥원 K-Startup",
+    "type": "crawl",
+    "url": "https://www.k-startup.go.kr",
+    "pages": 3,
+    "note": "구현 예정"
+  },
+  {
+    "source": "대전TP",
+    "enabled": false,
+    "description": "대전테크노파크",
+    "type": "crawl",
+    "url": "https://www.dtp.or.kr",
+    "pages": 2,
+    "note": "구현 예정"
+  },
+  {
+    "source": "충남경제진흥원",
+    "enabled": false,
+    "description": "충남경제진흥원",
+    "type": "crawl",
+    "url": "https://www.cepa.or.kr",
+    "pages": 2,
+    "note": "구현 예정"
+  }
+]
