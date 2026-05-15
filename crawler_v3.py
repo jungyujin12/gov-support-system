@@ -201,10 +201,10 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
     for page in range(1, pages + 1):
         # bizinfo.go.kr 자체 API 파라미터 형식
         params = {
-            "serviceKey": Config.BIZINFO_API_KEY,
-            "pageUnit":   Config.BIZINFO_ROWS,
-            "pageIndex":  page,
-            "dataType":   "json",
+            "crtfcKey":  Config.BIZINFO_API_KEY,  # bizinfo 전용 키 파라미터명
+            "pageUnit":  Config.BIZINFO_ROWS,
+            "pageIndex": page,
+            "dataType":  "json",
         }
         res = safe_get(Config.BIZINFO_URL, params=params)
         if not res:
@@ -213,15 +213,11 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
         try:
             data = res.json()
 
-            # bizinfo API 응답 구조: {response: {body: {items: [...], totalCount: N}}}
-            # 또는 {items: [...], totalCount: N} 직접 구조 둘 다 대응
-            if "response" in data:
-                body  = data["response"].get("body", {})
-                total = int(body.get("totalCount", 0))
-                items = body.get("items", [])
-            else:
-                total = int(data.get("totalCount", 0))
-                items = data.get("items", data.get("list", []))
+            # bizinfo API 응답 구조: {jsonArray: {item: [...], ...}}
+            json_arr = data.get("jsonArray", data)
+            items    = json_arr.get("item", [])
+            # totCnt는 각 item 안에 있음
+            total = int(items[0].get("totCnt", 0)) if items else 0
 
             if isinstance(items, dict):
                 items = [items]
