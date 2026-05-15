@@ -48,12 +48,13 @@
   },
   {
     "source": "K-Startup",
-    "enabled": false,
-    "description": "창업진흥원 K-Startup",
-    "type": "crawl",
+    "enabled": true,
+    "description": "창업진흥원 K-Startup 창업지원사업 공고",
+    "type": "api",
     "url": "https://www.k-startup.go.kr",
-    "pages": 3,
-    "note": "구현 예정"
+    "pages": 10,
+    "note": "API 키 필요 (KSTARTUP_API_KEY)",
+    "rows": 100
   },
   {
     "source": "대전TP",
