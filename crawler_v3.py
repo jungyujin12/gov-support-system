@@ -214,8 +214,14 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
             data = res.json()
 
             # bizinfo API 응답 구조: {jsonArray: {item: [...], ...}}
-            json_arr = data.get("jsonArray", data)
-            items    = json_arr.get("item", [])
+            json_arr = data.get("jsonArray", {})
+            raw_items = json_arr.get("item", [])
+
+            # item이 단일 dict인 경우 리스트로 변환
+            if isinstance(raw_items, dict):
+                raw_items = [raw_items]
+            items = raw_items if isinstance(raw_items, list) else []
+
             # totCnt는 각 item 안에 있음
             total = int(items[0].get("totCnt", 0)) if items else 0
 
