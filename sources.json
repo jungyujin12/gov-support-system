@@ -29,6 +29,15 @@
     "note": ""
   },
   {
+    "source": "과기부",
+    "enabled": true,
+    "description": "과학기술정보통신부 사업공고 (R&D, 국제협력, 인프라구축)",
+    "type": "api",
+    "pages": 10,
+    "rows": 100,
+    "note": "API 키 필요 (MSIT_API_KEY)"
+  },
+  {
     "source": "IRIS",
     "enabled": false,
     "description": "범부처통합연구지원시스템",
