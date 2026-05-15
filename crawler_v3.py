@@ -78,7 +78,7 @@ class Config:
     SLACK_WEBHOOK_URL: str = os.environ.get("SLACK_WEBHOOK_URL", "")
 
     # bizinfo.go.kr 자체 API (data.go.kr 경유 아님)
-    BIZINFO_URL: str = "https://apis.data.go.kr/1421000/bizinfo/getPblanc"
+    BIZINFO_URL: str = "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do"
     BIZINFO_ROWS: int = 100
 
     # HTTP
@@ -202,9 +202,9 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
         # bizinfo.go.kr 자체 API 파라미터 형식
         params = {
             "serviceKey": Config.BIZINFO_API_KEY,
-            "pageNo":     page,
-            "numOfRows":  Config.BIZINFO_ROWS,
-            "type":       "json",
+            "pageUnit":   Config.BIZINFO_ROWS,
+            "pageIndex":  page,
+            "dataType":   "json",
         }
         res = safe_get(Config.BIZINFO_URL, params=params)
         if not res:
