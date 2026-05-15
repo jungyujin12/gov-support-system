@@ -1,47 +1,51 @@
 """
-============================================================
- 정부지원사업 자동 수집 시스템 (보안 적용 버전)
- Government Grant Auto-Crawler — Secure Edition
-============================================================
- 대상 소스:
-   1. 기업마당 API (data.go.kr 공공데이터포털)
-   2. 교육부 사업공고 게시판 크롤링
+================================================================
+ 정부지원사업 자동 수집 시스템 v3
+ Gov Grant Radar — Structured Data Edition
+================================================================
+ v3 변경사항:
+   - sources.json 기반 소스 ON/OFF 관리
+   - /data/latest.json + /data/latest.csv 저장
+   - /archive/YYYY-MM-DD.json 날짜별 누적
+   - 크로스데이 중복 제거 (archive 기반)
+   - 확장 가능한 소스 핸들러 구조
 
- 보안 원칙:
-   - API 키는 절대 코드에 직접 입력하지 않음
-   - .env 파일 또는 시스템 환경변수에서 동적 로드
-   - GitHub Actions 사용 시 Secrets에서 주입
+ 디렉토리 구조:
+   /data
+     latest.json   ← 대시보드 fetch()용 최신 공고
+     latest.csv    ← CSV 다운로드용
+   /archive
+     2026-05-14.json
+     2026-05-15.json   ← 날짜별 누적 보관
 
- 필요 패키지 설치:
+ 설치:
    pip install requests beautifulsoup4 pandas python-dotenv openpyxl
-============================================================
+================================================================
 """
 
 import os
 import sys
+import json
 import time
 import logging
 import requests
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 from bs4 import BeautifulSoup
+from pathlib import Path
 
 # ──────────────────────────────────────────────
-# [1] 환경변수 로드 (python-dotenv 사용)
-#     .env 파일이 없으면 시스템 환경변수에서 직접 읽음
+# [1] 환경변수 로드
 # ──────────────────────────────────────────────
 try:
     from dotenv import load_dotenv
-    load_dotenv()  # 프로젝트 루트의 .env 파일 자동 로드
-    print("✅ .env 파일 로드 완료")
+    load_dotenv()
 except ImportError:
-    print("⚠️  python-dotenv 미설치. 시스템 환경변수에서 직접 읽습니다.")
-    print("   설치: pip install python-dotenv")
+    pass
 
 # ──────────────────────────────────────────────
-# [2] 로깅 설정
-#     - 콘솔 출력 + 파일 저장 동시 처리
+# [2] 로깅
 # ──────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
@@ -49,599 +53,553 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(sys.stdout),
         logging.FileHandler("crawler.log", encoding="utf-8"),
-    ]
+    ],
 )
 logger = logging.getLogger(__name__)
 
 
 # ──────────────────────────────────────────────
-# [3] 설정값 (Config)
-#     모든 민감 정보는 환경변수에서 읽음
+# [3] 경로 설정
+# ──────────────────────────────────────────────
+BASE_DIR    = Path(__file__).parent
+DATA_DIR    = BASE_DIR / "data"
+ARCHIVE_DIR = BASE_DIR / "archive"
+SOURCES_FILE = BASE_DIR / "sources.json"
+
+DATA_DIR.mkdir(exist_ok=True)
+ARCHIVE_DIR.mkdir(exist_ok=True)
+
+
+# ──────────────────────────────────────────────
+# [4] 설정 (Config)
 # ──────────────────────────────────────────────
 class Config:
-    """
-    환경변수 기반 설정 클래스.
-    코드에 직접 값을 입력하지 않고
-    os.environ을 통해 런타임에 주입받습니다.
-    """
-
-    # ── API 키: .env 또는 시스템 환경변수에서 읽음 ──
-    BIZINFO_API_KEY: str = os.environ.get("BIZINFO_API_KEY", "")
+    BIZINFO_API_KEY:  str = os.environ.get("BIZINFO_API_KEY", "")
     SLACK_WEBHOOK_URL: str = os.environ.get("SLACK_WEBHOOK_URL", "")
 
-    # ── 필터링 키워드 (대학 관련 사업만 추출) ──
-    KEYWORDS: list = ["대학", "산학협력", "인재양성", "R&D", "연구소", "석박사"]
-
-    # ── 기업마당 API 엔드포인트 ──
     BIZINFO_URL: str = (
         "https://apis.data.go.kr/B552735/kisedbizentrprssupport/getAnnoList"
     )
-    BIZINFO_ROWS: int = 100   # 한 번에 가져올 최대 공고 수
+    BIZINFO_ROWS: int = 100
 
-    # ── 교육부 게시판 URL ──
-    MOE_URL: str = (
-        "https://www.moe.go.kr/boardCnts/listRenew.do?boardID=72761"
-    )
-    MOE_PAGES: int = 3        # 크롤링할 페이지 수
+    # HTTP
+    TIMEOUT:     int   = 20
+    RETRY:       int   = 3
+    RETRY_DELAY: int   = 2
+    PAGE_DELAY:  float = 0.8
 
-    # ── 요청 타임아웃 / 재시도 ──
-    TIMEOUT: int = 15         # 초
-    RETRY: int = 3            # 재시도 횟수
-    RETRY_DELAY: int = 2      # 재시도 간격(초)
-
-    # ── 결과 저장 경로 ──
-    OUTPUT_DIR: str = "output"
-    OUTPUT_EXCEL: str = "정부지원사업_공고.xlsx"
-    OUTPUT_CSV: str = "정부지원사업_공고.csv"
-
-    @classmethod
-    def validate(cls) -> bool:
-        """
-        필수 환경변수 검증.
-        키가 없으면 경고를 출력하고 False 반환.
-        """
-        missing = []
-        if not cls.BIZINFO_API_KEY:
-            missing.append("BIZINFO_API_KEY")
-        if missing:
-            logger.warning(
-                f"⚠️  환경변수 누락: {', '.join(missing)}\n"
-                "   기업마당 API 수집은 건너뜁니다.\n"
-                "   .env 파일에 키를 추가하거나 환경변수를 설정하세요."
-            )
-            return False
-        return True
+    # 중복 제거용 archive 참조 일수
+    DEDUP_ARCHIVE_DAYS: int = 7
 
 
 # ──────────────────────────────────────────────
-# [4] HTTP 유틸리티 (재시도 로직 포함)
+# [5] sources.json 로드
 # ──────────────────────────────────────────────
-def safe_request(
-    url: str,
-    params: Optional[dict] = None,
-    headers: Optional[dict] = None,
-    method: str = "GET",
-) -> Optional[requests.Response]:
+def load_sources() -> list[dict]:
     """
-    재시도 로직이 포함된 안전한 HTTP 요청 함수.
-    네트워크 오류, 타임아웃, HTTP 에러를 개별 처리합니다.
-
-    Args:
-        url:     요청 URL
-        params:  쿼리 파라미터 딕셔너리
-        headers: 요청 헤더
-        method:  HTTP 메서드 (GET/POST)
-
-    Returns:
-        Response 객체 또는 None (실패 시)
+    sources.json에서 활성화된 소스 목록 반환.
+    파일 없으면 기본값(기업마당+교육부)으로 동작.
     """
-    default_headers = {
+    if not SOURCES_FILE.exists():
+        logger.warning("⚠️  sources.json 없음 → 기본 소스로 실행")
+        return [
+            {"source": "기업마당",      "enabled": True,  "type": "api",   "pages": 5},
+            {"source": "교육부_사업공고","enabled": True,  "type": "crawl", "pages": 5, "board_id": "72761"},
+        ]
+
+    with open(SOURCES_FILE, encoding="utf-8") as f:
+        all_sources = json.load(f)
+
+    enabled = [s for s in all_sources if s.get("enabled", False)]
+    disabled = [s["source"] for s in all_sources if not s.get("enabled", False)]
+
+    logger.info(f"📋 활성 소스: {[s['source'] for s in enabled]}")
+    if disabled:
+        logger.info(f"   비활성 소스: {disabled}")
+
+    return enabled
+
+
+# ──────────────────────────────────────────────
+# [6] HTTP 유틸
+# ──────────────────────────────────────────────
+def safe_get(url: str, params: dict = None) -> Optional[requests.Response]:
+    headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
         ),
         "Accept-Language": "ko-KR,ko;q=0.9",
     }
-    if headers:
-        default_headers.update(headers)
-
     for attempt in range(1, Config.RETRY + 1):
         try:
-            response = requests.request(
-                method,
-                url,
-                params=params,
-                headers=default_headers,
-                timeout=Config.TIMEOUT,
-            )
-            # HTTP 4xx/5xx 에러를 예외로 변환
-            response.raise_for_status()
-            return response
-
+            res = requests.get(url, params=params, headers=headers, timeout=Config.TIMEOUT)
+            res.raise_for_status()
+            return res
         except requests.exceptions.Timeout:
-            logger.warning(f"⏱️  타임아웃 (시도 {attempt}/{Config.RETRY}): {url}")
-        except requests.exceptions.ConnectionError:
-            logger.warning(f"🔌 연결 실패 (시도 {attempt}/{Config.RETRY}): {url}")
+            logger.warning(f"⏱️  타임아웃 {attempt}/{Config.RETRY}: {url[:55]}")
         except requests.exceptions.HTTPError as e:
-            logger.error(f"❌ HTTP 오류 {e.response.status_code}: {url}")
-            return None  # HTTP 에러는 재시도 무의미
-        except requests.exceptions.RequestException as e:
-            logger.error(f"❌ 알 수 없는 요청 오류: {e}")
-
+            logger.error(f"❌ HTTP {e.response.status_code}: {url[:55]}")
+            return None
+        except requests.exceptions.ConnectionError:
+            logger.warning(f"🔌 연결 실패 {attempt}/{Config.RETRY}")
+        except Exception as e:
+            logger.error(f"❌ 요청 오류: {e}")
+            return None
         if attempt < Config.RETRY:
-            logger.info(f"   {Config.RETRY_DELAY}초 후 재시도...")
             time.sleep(Config.RETRY_DELAY)
-
-    logger.error(f"❌ 최대 재시도 초과. 요청 포기: {url}")
     return None
 
 
 # ──────────────────────────────────────────────
-# [5] 기업마당 API 수집 모듈
+# [7] 날짜 정규화
 # ──────────────────────────────────────────────
-def fetch_bizinfo(page: int = 1) -> list[dict]:
+def normalize_date(raw: str) -> str:
     """
-    공공데이터포털 기업마당 API를 호출해 공고 목록을 수집합니다.
-    API 키는 Config에서 환경변수로 읽어옵니다.
-
-    ⚠️ 보안 주의: API 키를 params에 직접 넣더라도
-       로그에 절대 출력하지 않습니다.
-
-    Args:
-        page: 페이지 번호
-
-    Returns:
-        공고 딕셔너리 리스트
+    다양한 형식 → YYYY-MM-DD 변환.
+    파싱 불가 시 빈 문자열 반환.
     """
-    logger.info(f"📡 기업마당 API 호출 중... (page={page})")
+    import re
+    if not raw:
+        return ""
+    raw = str(raw).strip()
 
-    params = {
-        "serviceKey": Config.BIZINFO_API_KEY,  # 환경변수에서 주입
-        "pageNo": page,
-        "numOfRows": Config.BIZINFO_ROWS,
-        "type": "json",
-    }
+    # 이미 YYYY-MM-DD
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", raw):
+        return raw
 
-    response = safe_request(Config.BIZINFO_URL, params=params)
-    if not response:
+    # 8자리 숫자: 20251231
+    if re.match(r"^\d{8}$", raw):
+        return f"{raw[:4]}-{raw[4:6]}-{raw[6:8]}"
+
+    # 구분자 치환 후 재시도
+    cleaned = re.sub(r"[./]", "-", raw)
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", cleaned):
+        return cleaned
+
+    # 날짜 패턴 추출
+    match = re.search(r"(\d{4})[.\-/](\d{2})[.\-/](\d{2})", raw)
+    if match:
+        return f"{match.group(1)}-{match.group(2)}-{match.group(3)}"
+
+    logger.debug(f"날짜 파싱 실패: '{raw}'")
+    return ""
+
+
+# ──────────────────────────────────────────────
+# [8] 소스 핸들러 — 기업마당 API
+# ──────────────────────────────────────────────
+def handler_bizinfo(source_cfg: dict) -> list[dict]:
+    """기업마당 API 다중 페이지 수집"""
+    if not Config.BIZINFO_API_KEY:
+        logger.warning("⚠️  BIZINFO_API_KEY 없음 → 기업마당 건너뜀")
         return []
 
-    try:
-        data = response.json()
-        # API 응답 구조: response > body > items
-        body = data.get("response", {}).get("body", {})
-        items = body.get("items", [])
-
-        if not items:
-            logger.info("   기업마당: 수집된 공고 없음")
-            return []
-
-        # items가 dict인 경우(단일 항목) 리스트로 변환
-        if isinstance(items, dict):
-            items = [items]
-
-        logger.info(f"   기업마당: {len(items)}건 원본 수집")
-        return items
-
-    except (KeyError, ValueError) as e:
-        logger.error(f"❌ 기업마당 JSON 파싱 오류: {e}")
-        logger.debug(f"   응답 내용: {response.text[:300]}")
-        return []
-
-
-def parse_bizinfo(items: list[dict]) -> list[dict]:
-    """
-    기업마당 API 응답을 표준 포맷으로 변환하고
-    키워드 필터링을 적용합니다.
-
-    표준 포맷: {소스, 사업명, 주관부처, 마감일, 상세링크}
-    """
+    pages = source_cfg.get("pages", 5)
+    logger.info(f"📡 기업마당 API ({pages}페이지 × {Config.BIZINFO_ROWS}건)")
     results = []
-    for item in items:
-        title = item.get("pblancNm", "")  # 공고명
-        ministry = item.get("jrsdInsttNm", "")  # 관할기관명
-        deadline = item.get("rcptEndDd", "")  # 접수마감일
-        pblanc_id = item.get("pblancId", "")  # 공고 ID
 
-        # 키워드 필터링: 제목 또는 부처명에 키워드 포함 여부
-        matched = any(
-            kw in title or kw in ministry
-            for kw in Config.KEYWORDS
-        )
-        if not matched:
+    for page in range(1, pages + 1):
+        params = {
+            "serviceKey": Config.BIZINFO_API_KEY,
+            "pageNo": page,
+            "numOfRows": Config.BIZINFO_ROWS,
+            "type": "json",
+        }
+        res = safe_get(Config.BIZINFO_URL, params=params)
+        if not res:
             continue
 
-        # 상세링크 조합
-        detail_url = (
-            f"https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/"
-            f"view.do?pblancId={pblanc_id}"
-            if pblanc_id
-            else "https://www.bizinfo.go.kr"
-        )
-
-        results.append({
-            "소스": "기업마당",
-            "사업명": title,
-            "주관부처": ministry,
-            "마감일": deadline,
-            "상세링크": detail_url,
-        })
-
-    logger.info(f"   기업마당 필터링 후: {len(results)}건")
-    return results
-
-
-# ──────────────────────────────────────────────
-# [6] 교육부 게시판 크롤링 모듈
-# ──────────────────────────────────────────────
-def fetch_moe(max_pages: int = None) -> list[dict]:
-    """
-    교육부 사업공고 게시판을 BeautifulSoup으로 크롤링합니다.
-    robots.txt 준수 및 요청 간격 조절이 적용됩니다.
-
-    Args:
-        max_pages: 크롤링할 최대 페이지 수
-
-    Returns:
-        공고 딕셔너리 리스트
-    """
-    if max_pages is None:
-        max_pages = Config.MOE_PAGES
-
-    logger.info(f"🏫 교육부 게시판 크롤링 시작 ({max_pages}페이지)...")
-    results = []
-
-    for page in range(1, max_pages + 1):
-        # 서버 부하 방지: 페이지 간 1초 대기
-        if page > 1:
-            time.sleep(1)
-
-        url = (
-            f"https://www.moe.go.kr/boardCnts/listRenew.do"
-            f"?boardID=72761&page={page}"
-        )
-        response = safe_request(url)
-        if not response:
-            logger.warning(f"   교육부 {page}페이지 수집 실패, 건너뜀")
-            continue
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        page_items = _parse_moe_page(soup)
-        results.extend(page_items)
-        logger.info(f"   교육부 {page}페이지: {len(page_items)}건")
-
-    logger.info(f"   교육부 총 수집: {len(results)}건")
-    return results
-
-
-def _parse_moe_page(soup: BeautifulSoup) -> list[dict]:
-    """
-    교육부 게시판 HTML에서 공고 정보를 추출합니다.
-    사이트 구조 변경에 대비한 다중 셀렉터 전략을 사용합니다.
-
-    Returns:
-        파싱된 공고 리스트
-    """
-    results = []
-    BASE_URL = "https://www.moe.go.kr"
-
-    # 다중 셀렉터: 사이트 리뉴얼에 대비
-    selectors = [
-        "table.board_list tbody tr",
-        "table.bbs_list tbody tr",
-        ".board-list tbody tr",
-        "tbody tr",  # 최후 수단
-    ]
-
-    rows = []
-    for sel in selectors:
-        rows = soup.select(sel)
-        if rows:
-            break
-
-    for row in rows:
         try:
-            # 제목 셀 및 링크 추출
-            title_cell = (
-                row.select_one("td.subject a")
-                or row.select_one("td.title a")
-                or row.select_one("td a")
-            )
-            if not title_cell:
-                continue
+            body   = res.json().get("response", {}).get("body", {})
+            total  = int(body.get("totalCount", 0))
+            items  = body.get("items", [])
+            if isinstance(items, dict):
+                items = [items]
+            if not items:
+                break
 
-            title = title_cell.get_text(strip=True)
-            href = title_cell.get("href", "")
+            for item in items:
+                title = str(item.get("pblancNm", "")).strip()
+                if not title:
+                    continue
+                pid = str(item.get("pblancId", "")).strip()
+                url = (
+                    f"https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/"
+                    f"view.do?pblancId={pid}" if pid else "https://www.bizinfo.go.kr"
+                )
+                results.append({
+                    "소스":     "기업마당",
+                    "사업명":   title,
+                    "주관부처": str(item.get("jrsdInsttNm", "")).strip(),
+                    "마감일":   normalize_date(str(item.get("rcptEndDd", ""))),
+                    "상세링크": url,
+                })
 
-            # 빈 제목 또는 공지 행 건너뜀
-            if not title or title in ("공지", ""):
-                continue
-
-            # 키워드 필터링
-            if not any(kw in title for kw in Config.KEYWORDS):
-                continue
-
-            # 절대 URL 변환
-            if href and not href.startswith("http"):
-                href = BASE_URL + href
-
-            # 날짜 추출 (마지막 td 또는 date 클래스)
-            date_cell = (
-                row.select_one("td.date")
-                or row.select_one("td.regDate")
-            )
-            if not date_cell:
-                tds = row.select("td")
-                date_cell = tds[-1] if tds else None
-
-            date_text = date_cell.get_text(strip=True) if date_cell else ""
-
-            results.append({
-                "소스": "교육부",
-                "사업명": title,
-                "주관부처": "교육부",
-                "마감일": date_text,
-                "상세링크": href,
-            })
+            logger.info(f"   └ {page}페이지: {len(items)}건 (전체 {total}건)")
+            if page * Config.BIZINFO_ROWS >= total:
+                break
 
         except Exception as e:
-            logger.debug(f"   행 파싱 오류 (건너뜀): {e}")
-            continue
+            logger.error(f"   └ {page}페이지 파싱 오류: {e}")
 
+        time.sleep(Config.PAGE_DELAY)
+
+    logger.info(f"   ✅ 기업마당 합계: {len(results)}건")
     return results
 
 
 # ──────────────────────────────────────────────
-# [7] 데이터 정제 및 통합 (Pandas)
+# [9] 소스 핸들러 — 교육부 게시판
+# ──────────────────────────────────────────────
+def handler_moe(source_cfg: dict) -> list[dict]:
+    """교육부 게시판 다중 페이지 크롤링"""
+    board_id   = source_cfg.get("board_id", "72761")
+    pages      = source_cfg.get("pages", 5)
+    src_name   = source_cfg.get("source", "교육부")
+    BASE       = "https://www.moe.go.kr"
+
+    logger.info(f"🏫 {src_name} (board={board_id}, {pages}페이지)")
+    results = []
+
+    for page in range(1, pages + 1):
+        time.sleep(Config.PAGE_DELAY)
+        url = f"{BASE}/boardCnts/listRenew.do?boardID={board_id}&page={page}"
+        res = safe_get(url)
+        if not res:
+            continue
+
+        soup = BeautifulSoup(res.text, "html.parser")
+        rows = []
+        for sel in ["table.board_list tbody tr", "table.bbs_list tbody tr", "tbody tr"]:
+            rows = soup.select(sel)
+            if rows:
+                break
+
+        page_items = []
+        for row in rows:
+            try:
+                a = (
+                    row.select_one("td.subject a")
+                    or row.select_one("td.title a")
+                    or row.select_one("td a[href*='boardCnts']")
+                    or row.select_one("td a")
+                )
+                if not a:
+                    continue
+                title = a.get_text(strip=True)
+                if not title or title in ("공지", "[공지]"):
+                    continue
+
+                href = a.get("href", "")
+                if href and not href.startswith("http"):
+                    href = BASE + href
+                if not href or href.rstrip("/").endswith("#"):
+                    href = BASE
+
+                date_raw = _extract_date(row)
+
+                page_items.append({
+                    "소스":     src_name,
+                    "사업명":   title,
+                    "주관부처": "교육부",
+                    "마감일":   normalize_date(date_raw),
+                    "상세링크": href,
+                })
+            except Exception as e:
+                logger.debug(f"행 파싱 오류: {e}")
+
+        results.extend(page_items)
+        logger.info(f"   └ {page}페이지: {len(page_items)}건")
+
+        if not page_items:
+            break  # 빈 페이지 = 마지막 페이지
+
+    logger.info(f"   ✅ {src_name} 합계: {len(results)}건")
+    return results
+
+
+def _extract_date(row) -> str:
+    """테이블 행에서 날짜 텍스트 추출"""
+    import re
+    pattern = re.compile(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}|\d{8}")
+
+    # 날짜 클래스 우선
+    for cls in ["date", "regDate", "reg_date", "td_date"]:
+        cell = row.select_one(f"td.{cls}")
+        if cell:
+            t = cell.get_text(strip=True)
+            m = pattern.search(t)
+            return m.group() if m else t
+
+    # 전체 셀에서 패턴 탐색
+    for td in row.select("td"):
+        t = td.get_text(strip=True)
+        m = pattern.search(t)
+        if m:
+            return m.group()
+
+    # 마지막 셀
+    tds = row.select("td")
+    return tds[-1].get_text(strip=True) if tds else ""
+
+
+# ──────────────────────────────────────────────
+# [10] 향후 소스 핸들러 플레이스홀더
+#      sources.json에서 enabled:true로 바꾸고
+#      아래 함수를 구현하면 자동으로 수집됨
+# ──────────────────────────────────────────────
+def handler_iris(source_cfg: dict) -> list[dict]:
+    logger.info("ℹ️  IRIS 핸들러 미구현")
+    return []
+
+def handler_nrf(source_cfg: dict) -> list[dict]:
+    logger.info("ℹ️  NRF 핸들러 미구현")
+    return []
+
+def handler_kstartup(source_cfg: dict) -> list[dict]:
+    logger.info("ℹ️  K-Startup 핸들러 미구현")
+    return []
+
+def handler_daejeon_tp(source_cfg: dict) -> list[dict]:
+    logger.info("ℹ️  대전TP 핸들러 미구현")
+    return []
+
+def handler_generic_crawl(source_cfg: dict) -> list[dict]:
+    """
+    범용 크롤링 핸들러 (미구현 소스 기본 처리).
+    source_cfg에 url, pages 있으면 기본 크롤링 시도.
+    """
+    logger.info(f"ℹ️  {source_cfg.get('source')} 핸들러 미구현 → 건너뜀")
+    return []
+
+
+# 소스명 → 핸들러 함수 매핑 테이블
+HANDLER_MAP = {
+    "기업마당":       handler_bizinfo,
+    "교육부_사업공고": handler_moe,
+    "교육부_공지사항": handler_moe,
+    "IRIS":           handler_iris,
+    "NRF":            handler_nrf,
+    "K-Startup":      handler_kstartup,
+    "대전TP":         handler_daejeon_tp,
+    "충남경제진흥원":  handler_generic_crawl,
+}
+
+
+# ──────────────────────────────────────────────
+# [11] 크로스데이 중복 제거
+# ──────────────────────────────────────────────
+def load_recent_seen_names(days: int = 7) -> set:
+    """
+    최근 N일간 archive에서 수집된 사업명 set 반환.
+    오늘 수집분과 중복 제거용으로 사용.
+    """
+    seen = set()
+    for archive_file in sorted(ARCHIVE_DIR.glob("*.json"), reverse=True)[:days]:
+        try:
+            with open(archive_file, encoding="utf-8") as f:
+                data = json.load(f)
+            for item in data.get("items", []):
+                name = item.get("사업명", "").strip()
+                if name:
+                    seen.add(name)
+        except Exception as e:
+            logger.debug(f"archive 로드 오류 ({archive_file.name}): {e}")
+    return seen
+
+
+# ──────────────────────────────────────────────
+# [12] 데이터 정제
 # ──────────────────────────────────────────────
 def build_dataframe(all_items: list[dict]) -> pd.DataFrame:
-    """
-    수집된 모든 공고를 Pandas DataFrame으로 변환하고
-    중복 제거, 날짜 정렬, 컬럼 정리를 수행합니다.
+    COLS = ["소스", "사업명", "주관부처", "마감일", "상세링크"]
 
-    Returns:
-        정제된 DataFrame
-    """
     if not all_items:
-        logger.warning("⚠️  수집된 데이터 없음 — 빈 DataFrame 반환")
-        return pd.DataFrame(columns=["소스", "사업명", "주관부처", "마감일", "상세링크"])
+        logger.warning("⚠️  수집 결과 없음")
+        return pd.DataFrame(columns=COLS + ["수집일시"])
 
-    df = pd.DataFrame(all_items)
-
-    # 컬럼 순서 강제 지정
-    cols = ["소스", "사업명", "주관부처", "마감일", "상세링크"]
-    df = df.reindex(columns=cols)
-
-    # 중복 제거 (사업명 기준)
-    before = len(df)
-    df = df.drop_duplicates(subset=["사업명"], keep="first")
-    logger.info(f"🔄 중복 제거: {before - len(df)}건 제거됨")
+    df = pd.DataFrame(all_items).reindex(columns=COLS)
 
     # 빈 사업명 제거
-    df = df[df["사업명"].str.strip() != ""]
+    df = df[df["사업명"].str.strip().astype(bool)]
 
-    # 마감일 컬럼 정제 (숫자+하이픈 형식 정규화)
-    df["마감일"] = df["마감일"].astype(str).str.strip()
+    # 동일 실행 내 중복 제거 (사업명+링크 기준)
+    before = len(df)
+    df["_key"] = df["사업명"].str.strip() + "|" + df["상세링크"].fillna("").str.strip()
+    df = df.drop_duplicates(subset=["_key"]).drop(columns=["_key"])
+    logger.info(f"🔄 중복 제거: {before - len(df)}건 제거 → {len(df)}건")
 
-    # 수집 시각 추가
+    # 마감일 정렬 (빈 값 뒤로)
+    df["_sort"] = df["마감일"].replace("", "9999-99-99")
+    df = df.sort_values("_sort").drop(columns=["_sort"]).reset_index(drop=True)
+
     df["수집일시"] = datetime.now().strftime("%Y-%m-%d %H:%M")
-
-    logger.info(f"✅ 최종 데이터: {len(df)}건")
+    logger.info(f"✅ 최종: {len(df)}건")
     return df
 
 
 # ──────────────────────────────────────────────
-# [8] 결과 저장 모듈 (Excel + CSV)
+# [13] 저장 — /data + /archive
 # ──────────────────────────────────────────────
-def save_results(df: pd.DataFrame) -> dict[str, str]:
+def save_all(df: pd.DataFrame) -> dict:
     """
-    DataFrame을 Excel과 CSV 두 형식으로 저장합니다.
-    Excel은 스타일이 적용된 보기 좋은 형태로 저장합니다.
-
-    Returns:
-        저장된 파일 경로 딕셔너리 {excel, csv}
+    저장 구조:
+      /data/latest.json   ← 대시보드 fetch()용
+      /data/latest.csv    ← CSV 다운로드용
+      /archive/YYYY-MM-DD.json  ← 날짜별 누적
     """
-    os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
-    today = datetime.now().strftime("%Y%m%d")
+    today = datetime.now().strftime("%Y-%m-%d")
+    records = df.to_dict(orient="records") if not df.empty else []
+    paths = {}
 
-    excel_path = os.path.join(
-        Config.OUTPUT_DIR,
-        f"{today}_{Config.OUTPUT_EXCEL}"
-    )
-    csv_path = os.path.join(
-        Config.OUTPUT_DIR,
-        f"{today}_{Config.OUTPUT_CSV}"
-    )
+    # ── 공통 JSON 구조 ──
+    json_body = {
+        "generated_at": datetime.now().isoformat(),
+        "date": today,
+        "total": len(records),
+        "sources": df["소스"].value_counts().to_dict() if not df.empty else {},
+        "items": records,
+    }
 
-    # ── CSV 저장 ──
-    df.to_csv(csv_path, index=False, encoding="utf-8-sig")  # BOM 포함 (Excel 호환)
-    logger.info(f"💾 CSV 저장: {csv_path}")
+    # ── /data/latest.json ──
+    latest_json = DATA_DIR / "latest.json"
+    with open(latest_json, "w", encoding="utf-8") as f:
+        json.dump(json_body, f, ensure_ascii=False, indent=2)
+    paths["latest_json"] = str(latest_json)
+    logger.info(f"💾 latest.json: {len(records)}건")
 
-    # ── Excel 저장 (openpyxl 스타일 적용) ──
-    try:
-        with pd.ExcelWriter(excel_path, engine="openpyxl") as writer:
-            df.to_excel(writer, index=False, sheet_name="공고목록")
-            ws = writer.sheets["공고목록"]
+    # ── /data/latest.csv ──
+    latest_csv = DATA_DIR / "latest.csv"
+    df.to_csv(latest_csv, index=False, encoding="utf-8-sig")
+    paths["latest_csv"] = str(latest_csv)
+    logger.info(f"💾 latest.csv")
 
-            # 헤더 스타일
-            from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-            header_fill = PatternFill(
-                start_color="1E3A5F", end_color="1E3A5F", fill_type="solid"
-            )
-            header_font = Font(color="FFFFFF", bold=True, size=11)
-            thin_border = Border(
-                left=Side(style="thin"),
-                right=Side(style="thin"),
-                top=Side(style="thin"),
-                bottom=Side(style="thin"),
-            )
+    # ── /archive/YYYY-MM-DD.json ──
+    archive_file = ARCHIVE_DIR / f"{today}.json"
+    if archive_file.exists():
+        # 기존 archive와 병합 (같은 날 여러 번 실행 시)
+        try:
+            with open(archive_file, encoding="utf-8") as f:
+                existing = json.load(f)
+            existing_names = {i["사업명"] for i in existing.get("items", [])}
+            new_items = [r for r in records if r["사업명"] not in existing_names]
+            merged = existing.get("items", []) + new_items
+            json_body["items"] = merged
+            json_body["total"] = len(merged)
+            logger.info(f"📁 archive 병합: 기존 {len(existing.get('items',[]))}건 + 신규 {len(new_items)}건")
+        except Exception:
+            pass
 
-            for col_num, cell in enumerate(ws[1], 1):
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = Alignment(horizontal="center", vertical="center")
-                cell.border = thin_border
+    with open(archive_file, "w", encoding="utf-8") as f:
+        json.dump(json_body, f, ensure_ascii=False, indent=2)
+    paths["archive"] = str(archive_file)
+    logger.info(f"📁 archive/{today}.json: {json_body['total']}건")
 
-            # 열 너비 자동 조정
-            col_widths = {
-                "A": 12,   # 소스
-                "B": 50,   # 사업명
-                "C": 20,   # 주관부처
-                "D": 15,   # 마감일
-                "E": 60,   # 상세링크
-                "F": 18,   # 수집일시
-            }
-            for col_letter, width in col_widths.items():
-                ws.column_dimensions[col_letter].width = width
+    # ── archive 목록 메타 업데이트 ──
+    _update_archive_index()
 
-            # 행 높이 설정
-            ws.row_dimensions[1].height = 22
-            for row in ws.iter_rows(min_row=2):
-                ws.row_dimensions[row[0].row].height = 18
-                for cell in row:
-                    cell.border = thin_border
-                    cell.alignment = Alignment(vertical="center")
+    return paths
 
-        logger.info(f"📊 Excel 저장: {excel_path}")
 
-    except ImportError:
-        logger.warning("⚠️  openpyxl 미설치. Excel 저장 건너뜀. (pip install openpyxl)")
-        excel_path = None
+def _update_archive_index():
+    """
+    /data/archive_index.json 업데이트.
+    대시보드에서 과거 날짜 목록을 fetch()할 때 사용.
+    """
+    files = sorted(ARCHIVE_DIR.glob("*.json"), reverse=True)
+    index = []
+    for f in files:
+        try:
+            with open(f, encoding="utf-8") as fp:
+                d = json.load(fp)
+            index.append({
+                "date": d.get("date", f.stem),
+                "total": d.get("total", 0),
+                "sources": d.get("sources", {}),
+                "file": f"archive/{f.name}",
+            })
+        except Exception:
+            pass
 
-    return {"excel": excel_path, "csv": csv_path}
+    index_path = DATA_DIR / "archive_index.json"
+    with open(index_path, "w", encoding="utf-8") as f:
+        json.dump({"updated_at": datetime.now().isoformat(), "archives": index}, f,
+                  ensure_ascii=False, indent=2)
+    logger.info(f"📋 archive_index.json: {len(index)}개 날짜")
 
 
 # ──────────────────────────────────────────────
-# [9] 슬랙 알림 모듈
+# [14] 슬랙 알림
 # ──────────────────────────────────────────────
-def send_slack(df: pd.DataFrame) -> bool:
-    """
-    수집 결과 요약을 슬랙 웹훅으로 전송합니다.
-    웹훅 URL은 환경변수 SLACK_WEBHOOK_URL에서 읽습니다.
-
-    Args:
-        df: 수집된 공고 DataFrame
-
-    Returns:
-        전송 성공 여부
-    """
+def send_slack(df: pd.DataFrame):
     if not Config.SLACK_WEBHOOK_URL:
-        logger.info("ℹ️  SLACK_WEBHOOK_URL 미설정. 슬랙 알림 건너뜀.")
-        return False
-
+        return
     today = datetime.now().strftime("%Y년 %m월 %d일")
-    urgent = df[
-        df["마감일"].str.match(r"\d{8}|\d{4}-\d{2}-\d{2}", na=False)
-    ] if not df.empty else pd.DataFrame()
+    sources_txt = " · ".join(
+        f"{k}: {v}건" for k, v in df["소스"].value_counts().items()
+    ) if not df.empty else "없음"
 
-    # 슬랙 블록 메시지 구성
-    blocks = [
-        {
-            "type": "header",
-            "text": {
-                "type": "plain_text",
-                "text": f"📡 정부지원사업 공고 수집 완료 — {today}",
-            },
-        },
-        {
-            "type": "section",
-            "fields": [
-                {"type": "mrkdwn", "text": f"*전체 공고*\n{len(df)}건"},
-                {"type": "mrkdwn", "text": f"*기업마당*\n{len(df[df['소스']=='기업마당'])}건"},
-                {"type": "mrkdwn", "text": f"*교육부*\n{len(df[df['소스']=='교육부'])}건"},
-                {"type": "mrkdwn", "text": f"*수집 시각*\n{datetime.now().strftime('%H:%M')}"},
-            ],
-        },
-        {"type": "divider"},
-    ]
-
-    # 상위 5건 목록 추가
-    if not df.empty:
-        top5_text = "\n".join(
-            f"• <{row['상세링크']}|{row['사업명'][:35]}{'...' if len(row['사업명'])>35 else ''}>"
-            f"  _{row['주관부처']}_"
-            for _, row in df.head(5).iterrows()
-        )
-        blocks.append({
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": f"*📋 주요 공고 TOP 5*\n{top5_text}",
-            },
-        })
-
-    payload = {"blocks": blocks}
-    response = safe_request(
-        Config.SLACK_WEBHOOK_URL,
-        method="POST",
-        headers={"Content-Type": "application/json"},
-    )
-
-    # POST는 safe_request의 params가 아닌 json으로 전송해야 함
     try:
-        import json
-        res = requests.post(
-            Config.SLACK_WEBHOOK_URL,
-            json=payload,
-            timeout=Config.TIMEOUT,
-        )
-        if res.status_code == 200:
-            logger.info("💬 슬랙 알림 전송 성공")
-            return True
-        else:
-            logger.error(f"❌ 슬랙 전송 실패: {res.status_code} {res.text}")
-            return False
+        requests.post(Config.SLACK_WEBHOOK_URL, json={
+            "blocks": [
+                {"type": "header",
+                 "text": {"type": "plain_text", "text": f"📡 공고 수집 완료 — {today}"}},
+                {"type": "section",
+                 "text": {"type": "mrkdwn",
+                          "text": f"*전체 {len(df)}건*\n{sources_txt}"}},
+            ]
+        }, timeout=10)
+        logger.info("💬 슬랙 알림 전송")
     except Exception as e:
-        logger.error(f"❌ 슬랙 전송 오류: {e}")
-        return False
+        logger.warning(f"슬랙 오류 (무시): {e}")
 
 
 # ──────────────────────────────────────────────
-# [10] 메인 실행 함수
+# [15] 메인
 # ──────────────────────────────────────────────
 def main():
-    """
-    전체 파이프라인 실행:
-      기업마당 API → 교육부 크롤링 → 통합 → 저장 → 슬랙 알림
-    """
-    logger.info("=" * 55)
-    logger.info("  정부지원사업 자동 수집 시작")
-    logger.info(f"  실행 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    logger.info("=" * 55)
+    logger.info("=" * 60)
+    logger.info("  정부지원사업 자동 수집 v3")
+    logger.info(f"  실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info("=" * 60)
 
+    # ── 활성 소스 로드 ──
+    sources = load_sources()
+    if not sources:
+        logger.error("❌ 활성 소스 없음. sources.json 확인")
+        sys.exit(1)
+
+    # ── 소스별 수집 ──
     all_items = []
+    for src_cfg in sources:
+        src_name = src_cfg.get("source", "")
+        handler = HANDLER_MAP.get(src_name, handler_generic_crawl)
+        try:
+            items = handler(src_cfg)
+            all_items.extend(items)
+        except Exception as e:
+            logger.error(f"❌ {src_name} 수집 중 오류: {e}")
 
-    # ── 기업마당 API 수집 ──
-    if Config.validate():
-        raw_items = fetch_bizinfo(page=1)
-        parsed = parse_bizinfo(raw_items)
-        all_items.extend(parsed)
-    else:
-        logger.warning("기업마당 API 수집 건너뜀 (API 키 없음)")
-
-    # ── 교육부 크롤링 ──
-    moe_items = fetch_moe()
-    all_items.extend(moe_items)
-
-    # ── DataFrame 구성 ──
+    # ── 정제 ──
     df = build_dataframe(all_items)
 
-    # ── 결과 출력 ──
+    # ── 저장 ──
+    paths = save_all(df)
+
+    # ── 결과 요약 ──
+    logger.info("\n📊 소스별 수집 현황:")
     if not df.empty:
-        logger.info("\n📋 수집 결과 미리보기:")
-        print(df[["소스", "사업명", "주관부처", "마감일"]].to_string(index=False))
+        for src, cnt in df["소스"].value_counts().items():
+            logger.info(f"   {src:20s}: {cnt:4d}건")
+    logger.info(f"\n   저장 경로: {list(paths.keys())}")
 
-    # ── 파일 저장 ──
-    paths = save_results(df)
-    logger.info(f"\n✅ 완료! 저장 경로: {paths}")
-
-    # ── 슬랙 알림 ──
+    # ── 슬랙 ──
     send_slack(df)
 
-    logger.info("=" * 55)
-    logger.info("  수집 완료")
-    logger.info("=" * 55)
-
+    logger.info("\n" + "=" * 60)
+    logger.info(f"  완료! 총 {len(df)}건")
+    logger.info("=" * 60)
     return df
 
 
