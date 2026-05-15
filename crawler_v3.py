@@ -214,28 +214,26 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
             data = res.json()
             logger.debug(f"   응답 키: {list(data.keys()) if isinstance(data, dict) else type(data)}")
 
-            # bizinfo API 응답 구조 파악 (방어적 처리)
-            # 가능한 구조: {jsonArray: {item:[...]}} 또는 {jsonArray: [{item:[...]}]}
-            json_arr = data.get("jsonArray", data) if isinstance(data, dict) else data
+            # bizinfo API 실제 응답 구조:
+            # {"jsonArray": [{공고1}, {공고2}, ...]}
+            # jsonArray 자체가 공고 리스트임!
+            json_arr = data.get("jsonArray", [])
 
-            # jsonArray가 리스트인 경우 첫 번째 요소 사용
             if isinstance(json_arr, list):
-                json_arr = json_arr[0] if json_arr else {}
-
-            raw_items = json_arr.get("item", []) if isinstance(json_arr, dict) else []
-
-            # item이 단일 dict인 경우 리스트로 변환
-            if isinstance(raw_items, dict):
-                raw_items = [raw_items]
-            items = raw_items if isinstance(raw_items, list) else []
+                items = json_arr  # jsonArray가 바로 공고 리스트
+            elif isinstance(json_arr, dict):
+                # 혹시 {item: [...]} 구조인 경우 대비
+                raw = json_arr.get("item", [])
+                items = [raw] if isinstance(raw, dict) else raw
+            else:
+                items = []
 
             if not items:
                 logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
-                logger.debug(f"   json_arr 타입: {type(json_arr)}, raw_items 타입: {type(raw_items)}")
                 break
 
-            # totCnt는 각 item 안에 있음 (item이 dict인 경우만)
-            first = items[0]
+            # totCnt는 각 공고 아이템 안에 포함됨
+            first = items[0] if items else {}
             total = int(first.get("totCnt", 0)) if isinstance(first, dict) else 0
 
             page_results = []
