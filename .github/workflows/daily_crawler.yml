@@ -1,91 +1,109 @@
-# ============================================================
-#  GitHub Actions 자동화 워크플로우
-#  파일 위치: .github/workflows/daily_crawler.yml
+# ================================================================
+#  GitHub Actions v3
+#  .github/workflows/daily_crawler.yml
 #
-#  동작 방식:
-#    - 매일 오전 9시 (한국 시간, UTC+9 = UTC 00:00) 자동 실행
-#    - API 키는 GitHub Secrets에서 안전하게 주입
-#    - 수집 결과를 Artifacts로 저장 (7일간 보관)
-# ============================================================
+#  변경사항:
+#    - /data/latest.json + /data/latest.csv 커밋
+#    - /archive/날짜.json 자동 누적 커밋
+#    - /data/archive_index.json 커밋
+#    - GitHub Pages 자동 배포
+# ================================================================
 
-name: 정부지원사업 공고 자동 수집
+name: 정부지원사업 공고 자동 수집 v3
 
 on:
-  # ── 자동 실행: 매일 00:00 UTC = 한국 09:00 ──
   schedule:
-    - cron: "0 0 * * 1-5"   # 평일(월~금)만 실행
-    # - cron: "0 0 * * *"   # 매일 실행하려면 이 줄 사용
-
-  # ── 수동 실행: GitHub Actions 탭에서 직접 트리거 가능 ──
-  workflow_dispatch:
-    inputs:
-      pages:
-        description: "교육부 크롤링 페이지 수"
-        required: false
-        default: "3"
+    - cron: "0 0 * * 1-5"   # 평일 09:00 KST
+  workflow_dispatch:          # 수동 실행
 
 jobs:
-  crawl:
-    name: 공고 수집 및 저장
+  crawl-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write         # 저장소 커밋 권한
 
     steps:
-      # ── 1. 저장소 체크아웃 ──
-      - name: 📥 저장소 체크아웃
+      - name: 📥 체크아웃
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # 전체 히스토리 (archive 병합용)
 
-      # ── 2. Python 환경 설정 ──
-      - name: 🐍 Python 3.11 설정
+      - name: 🐍 Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"   # 의존성 캐싱으로 빌드 속도 향상
+          cache: "pip"
 
-      # ── 3. 의존성 설치 ──
       - name: 📦 패키지 설치
         run: |
-          python -m pip install --upgrade pip
           pip install requests beautifulsoup4 pandas python-dotenv openpyxl
 
-      # ── 4. 크롤러 실행 ──
-      #    ⚠️ 보안 핵심: API 키는 GitHub Secrets에서만 주입
-      #    설정 방법: 저장소 Settings > Secrets and variables
-      #              > Actions > New repository secret
       - name: 🚀 크롤러 실행
         env:
-          BIZINFO_API_KEY: ${{ secrets.BIZINFO_API_KEY }}
+          BIZINFO_API_KEY:   ${{ secrets.BIZINFO_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          python crawler.py
+          python crawler_v3.py
 
-      # ── 5. 수집 결과를 Artifact로 저장 ──
-      - name: 💾 결과 파일 업로드
+      - name: 📊 수집 결과 확인
+        run: |
+          echo "=== 수집 결과 ==="
+          python -c "
+          import json, pathlib
+          f = pathlib.Path('data/latest.json')
+          if f.exists():
+              d = json.loads(f.read_text(encoding='utf-8'))
+              print(f'전체: {d[\"total\"]}건')
+              for src, cnt in d.get('sources', {}).items():
+                  print(f'  {src}: {cnt}건')
+          else:
+              print('data/latest.json 없음')
+          "
+          echo ""
+          echo "=== archive 목록 ==="
+          ls archive/ 2>/dev/null || echo "archive 없음"
+
+      - name: 📤 결과 저장소 커밋
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 변경된 파일만 add
+          git add data/latest.json
+          git add data/latest.csv
+          git add data/archive_index.json 2>/dev/null || true
+          git add archive/ 2>/dev/null || true
+
+          # 변경사항 있을 때만 커밋
+          git diff --staged --quiet || \
+            git commit -m "data: 공고 자동 수집 $(date +'%Y-%m-%d') [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 💾 Artifacts 업로드
         uses: actions/upload-artifact@v4
         with:
-          name: 공고수집결과_${{ github.run_id }}
-          path: output/
-          retention-days: 7   # 7일간 보관 후 자동 삭제
+          name: 공고수집_${{ github.run_id }}
+          path: |
+            data/latest.json
+            data/latest.csv
+          retention-days: 30
 
-      # ── 6. 실패 시 알림 (선택사항) ──
-      - name: ❌ 실패 알림
+      - name: ❌ 실패 시 로그
         if: failure()
-        run: |
-          echo "크롤러 실행 실패! GitHub Actions 로그를 확인하세요."
-          # 여기에 이메일 또는 슬랙 실패 알림 추가 가능
+        run: cat crawler.log 2>/dev/null || echo "로그 없음"
 
-# ============================================================
-#  GitHub Secrets 설정 방법 (최초 1회만):
+# ================================================================
+#  GitHub Pages 설정:
 #
-#  1. GitHub 저장소 페이지 접속
-#  2. Settings > Secrets and variables > Actions
-#  3. [New repository secret] 클릭
-#  4. 아래 두 가지 Secret 추가:
-#     Name: BIZINFO_API_KEY
-#     Secret: (발급받은 API 키 붙여넣기)
+#  저장소 Settings → Pages
+#  → Source: Deploy from a branch
+#  → Branch: main / (root)
+#  → Save
 #
-#     Name: SLACK_WEBHOOK_URL
-#     Secret: (슬랙 웹훅 URL 붙여넣기)
+#  접속: https://[계정].github.io/gov-support-system/
 #
-#  ⚠️ Secret 값은 등록 후 다시 볼 수 없습니다.
-#     필요 시 삭제 후 재등록하세요.
-# ============================================================
+#  대시보드에서 자동 로드:
+#  fetch('data/latest.json')
+# ================================================================
