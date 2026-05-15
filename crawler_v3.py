@@ -77,9 +77,8 @@ class Config:
     BIZINFO_API_KEY:  str = os.environ.get("BIZINFO_API_KEY", "")
     SLACK_WEBHOOK_URL: str = os.environ.get("SLACK_WEBHOOK_URL", "")
 
-    BIZINFO_URL: str = (
-        "https://apis.data.go.kr/B552735/kisedbizentrprssupport/getAnnoList"
-    )
+    # bizinfo.go.kr 자체 API (data.go.kr 경유 아님)
+    BIZINFO_URL: str = "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do"
     BIZINFO_ROWS: int = 100
 
     # HTTP
@@ -200,48 +199,69 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
     results = []
 
     for page in range(1, pages + 1):
+        # bizinfo.go.kr 자체 API 파라미터 형식
         params = {
-            "serviceKey": Config.BIZINFO_API_KEY,
-            "pageNo": page,
-            "numOfRows": Config.BIZINFO_ROWS,
-            "type": "json",
+            "pageUnit":  Config.BIZINFO_ROWS,
+            "pageIndex": page,
+            "dataType":  "json",
         }
         res = safe_get(Config.BIZINFO_URL, params=params)
         if not res:
             continue
 
         try:
-            body   = res.json().get("response", {}).get("body", {})
-            total  = int(body.get("totalCount", 0))
-            items  = body.get("items", [])
+            data = res.json()
+
+            # bizinfo API 응답 구조: {response: {body: {items: [...], totalCount: N}}}
+            # 또는 {items: [...], totalCount: N} 직접 구조 둘 다 대응
+            if "response" in data:
+                body  = data["response"].get("body", {})
+                total = int(body.get("totalCount", 0))
+                items = body.get("items", [])
+            else:
+                total = int(data.get("totalCount", 0))
+                items = data.get("items", data.get("list", []))
+
             if isinstance(items, dict):
                 items = [items]
             if not items:
+                logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
                 break
 
+            page_results = []
             for item in items:
-                title = str(item.get("pblancNm", "")).strip()
+                # bizinfo API 필드명 (pblancNm, jrsdInsttNm, rcptEndDd, pblancId)
+                title = str(item.get("pblancNm",  item.get("title", ""))).strip()
                 if not title:
                     continue
-                pid = str(item.get("pblancId", "")).strip()
-                url = (
-                    f"https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/"
-                    f"view.do?pblancId={pid}" if pid else "https://www.bizinfo.go.kr"
-                )
-                results.append({
+                ministry = str(item.get("jrsdInsttNm", item.get("org", ""))).strip()
+                deadline = str(item.get("rcptEndDd",   item.get("endDate", ""))).strip()
+                pid      = str(item.get("pblancId",    item.get("id", ""))).strip()
+
+                # 상세링크
+                if pid:
+                    detail_url = (f"https://www.bizinfo.go.kr/web/lay1/bbs/"
+                                  f"S1T122C128/AS/74/view.do?pblancId={pid}")
+                else:
+                    detail_url = "https://www.bizinfo.go.kr"
+
+                page_results.append({
                     "소스":     "기업마당",
                     "사업명":   title,
-                    "주관부처": str(item.get("jrsdInsttNm", "")).strip(),
-                    "마감일":   normalize_date(str(item.get("rcptEndDd", ""))),
-                    "상세링크": url,
+                    "주관부처": ministry,
+                    "마감일":   normalize_date(deadline),
+                    "상세링크": detail_url,
                 })
 
-            logger.info(f"   └ {page}페이지: {len(items)}건 (전체 {total}건)")
-            if page * Config.BIZINFO_ROWS >= total:
+            results.extend(page_results)
+            logger.info(f"   └ {page}페이지: {len(page_results)}건 (전체 {total}건)")
+
+            if not page_results or page * Config.BIZINFO_ROWS >= total:
                 break
 
         except Exception as e:
             logger.error(f"   └ {page}페이지 파싱 오류: {e}")
+            logger.debug(f"   응답: {res.text[:200]}")
 
         time.sleep(Config.PAGE_DELAY)
 
@@ -291,11 +311,24 @@ def handler_moe(source_cfg: dict) -> list[dict]:
                 if not title or title in ("공지", "[공지]"):
                     continue
 
-                href = a.get("href", "")
+                import re as _re
+                href = a.get("href", "").strip()
+
+                # onclick 속성에서 boardSeq 추출 (교육부 JS 링크 대응)
+                if not href or href in ("#", "javascript:void(0)", ""):
+                    onclick = a.get("onclick", "")
+                    seq_m = _re.search(r"(\d{5,})", onclick)
+                    if seq_m:
+                        href = (f"{BASE}/boardCnts/view.do"
+                                f"?boardID={board_id}&boardSeq={seq_m.group(1)}")
+
+                # 상대경로 → 절대경로
                 if href and not href.startswith("http"):
                     href = BASE + href
-                if not href or href.rstrip("/").endswith("#"):
-                    href = BASE
+
+                # 대표 주소만 남으면 빈 문자열 (링크 없음 처리)
+                if not href or href.rstrip("/") == BASE:
+                    href = ""
 
                 date_raw = _extract_date(row)
 
