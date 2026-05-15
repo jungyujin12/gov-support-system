@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공고 레이더 v3 — 정부지원사업 통합 관리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080b10;--bg-p:#0e1219;--bg-c:#141820;--bg-ch:#1a2030;
+  --bdr:#1e2635;--bdr-b:#28334a;
+  --ac:#3b82f6;--ac-d:rgba(59,130,246,0.1);--ac-g:rgba(59,130,246,0.2);
+  --gn:#10b981;--gn-d:rgba(16,185,129,0.1);
+  --yl:#f59e0b;--yl-d:rgba(245,158,11,0.1);
+  --rd:#ef4444;--rd-d:rgba(239,68,68,0.1);
+  --pp:#8b5cf6;--pp-d:rgba(139,92,246,0.1);
+  --cy:#06b6d4;--cy-d:rgba(6,182,212,0.1);
+  --or:#f97316;--or-d:rgba(249,115,22,0.1);
+  --t1:#dde4f0;--t2:#7b8ea8;--t3:#3d4f68;
+  --sans:'Noto Sans KR',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:10px;--rs:6px;--tr:0.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100vh;font-size:14px;line-height:1.6;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 15% 0%,rgba(59,130,246,0.04),transparent 60%);pointer-events:none;z-index:0;}
+
+/* ── 레이아웃 ── */
+.shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── 사이드바 ── */
+.sidebar{width:224px;background:var(--bg-p);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:width .2s;}
+.logo{padding:20px 16px 16px;border-bottom:1px solid var(--bdr);}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-gem{width:32px;height:32px;background:linear-gradient(135deg,var(--ac),var(--pp));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 18px var(--ac-g);flex-shrink:0;}
+.logo-name{font-size:14px;font-weight:700;}
+.logo-ver{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:2px;}
+.nav{padding:12px 8px;flex:1;overflow-y:auto;}
+.nav-sec{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:1.2px;text-transform:uppercase;padding:0 8px;margin:12px 0 5px;}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);cursor:pointer;color:var(--t2);font-size:13px;transition:all var(--tr);border:1px solid transparent;margin-bottom:1px;user-select:none;}
+.ni:hover{background:var(--bg-c);color:var(--t1);}
+.ni.on{background:var(--ac-d);color:var(--ac);border-color:rgba(59,130,246,0.18);}
+.ni .ico{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.ni .cnt{margin-left:auto;font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--bdr);color:var(--t3);padding:1px 6px;border-radius:20px;}
+.ni.on .cnt{background:var(--ac-d);border-color:var(--ac);color:var(--ac);}
+.sb-foot{padding:12px;border-top:1px solid var(--bdr);}
+.sync-row{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--t3);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--gn);box-shadow:0 0 7px var(--gn);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── 메인 ── */
+.main{margin-left:224px;flex:1;display:flex;flex-direction:column;}
+.topbar{padding:13px 24px;border-bottom:1px solid var(--bdr);background:rgba(14,18,25,.85);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;}
+.topbar-title{font-size:15px;font-weight:700;flex:1;}
+.topbar-title em{color:var(--ac);font-style:normal;}
+
+/* ── 버튼 ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all var(--tr);font-family:var(--sans);white-space:nowrap;line-height:1;text-decoration:none;}
+.btn-p{background:var(--ac);color:#fff;box-shadow:0 0 14px var(--ac-g);}
+.btn-p:hover{background:#2563eb;transform:translateY(-1px);}
+.btn-g{background:var(--bg-c);color:var(--t2);border:1px solid var(--bdr);}
+.btn-g:hover{color:var(--t1);border-color:var(--bdr-b);}
+.btn-s{padding:5px 10px;font-size:11px;}
+.btn-danger{background:var(--rd-d);color:var(--rd);border:1px solid rgba(239,68,68,.2);}
+.btn-danger:hover{background:var(--rd);color:#fff;}
+.btn.loading{pointer-events:none;opacity:.7;}
+.sp{width:11px;height:11px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ── 탭 ── */
+.tabs{display:flex;border-bottom:1px solid var(--bdr);background:var(--bg-p);padding:0 24px;overflow-x:auto;}
+.tab{padding:12px 16px;font-size:13px;font-weight:500;cursor:pointer;color:var(--t2);border-bottom:2px solid transparent;transition:all var(--tr);white-space:nowrap;flex-shrink:0;}
+.tab:hover{color:var(--t1);}
+.tab.on{color:var(--ac);border-bottom-color:var(--ac);}
+
+/* ── 뷰 ── */
+.view{display:none;padding:22px 24px;}
+.view.on{display:block;}
+
+/* ── 데이터 로드 상태 배너 ── */
+.data-banner{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r);margin-bottom:18px;font-size:12px;}
+.data-banner.loading{background:var(--yl-d);border:1px solid rgba(245,158,11,.2);}
+.data-banner.ok{background:var(--gn-d);border:1px solid rgba(16,185,129,.2);}
+.data-banner.err{background:var(--rd-d);border:1px solid rgba(239,68,68,.2);}
+.data-banner.local{background:var(--ac-d);border:1px solid rgba(59,130,246,.2);}
+.db-ico{font-size:16px;flex-shrink:0;}
+.db-txt{flex:1;}
+.db-main{font-weight:600;margin-bottom:2px;}
+.db-sub{color:var(--t3);font-size:11px;}
+
+/* ── 통계 ── */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.sc{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);padding:15px 16px;position:relative;overflow:hidden;transition:all var(--tr);}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sc.bl::after{background:var(--ac);}
+.sc.gn::after{background:var(--gn);}
+.sc.yl::after{background:var(--yl);}
+.sc.rd::after{background:var(--rd);}
+.sc.pp::after{background:var(--pp);}
+.sc:hover{border-color:var(--bdr-b);transform:translateY(-2px);}
+.sc-lbl{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px;}
+.sc-val{font-family:var(--mono);font-size:24px;font-weight:600;line-height:1;margin-bottom:3px;}
+.sc.bl .sc-val{color:var(--ac);}
+.sc.gn .sc-val{color:var(--gn);}
+.sc.yl .sc-val{color:var(--yl);}
+.sc.rd .sc-val{color:var(--rd);}
+.sc.pp .sc-val{color:var(--pp);}
+.sc-sub{font-size:11px;color:var(--t3);}
+
+/* ── 필터바 ── */
+.fbar{display:flex;align-items:center;gap:9px;margin-bottom:15px;flex-wrap:wrap;}
+.sw{flex:1;min-width:180px;position:relative;}
+.sw input{width:100%;background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);padding:8px 12px 8px 32px;color:var(--t1);font-size:13px;font-family:var(--sans);outline:none;transition:all var(--tr);}
+.sw input:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-d);}
+.sw input::placeholder{color:var(--t3);}
+.sw-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:13px;}
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:var(--bg-c);color:var(--t3);transition:all var(--tr);user-select:none;}
+.chip:hover{color:var(--t1);border-color:var(--bdr-b);}
+.chip.on{background:var(--ac-d);color:var(--ac);border-color:rgba(59,130,246,.25);}
+
+/* ── 테이블 ── */
+.tbl-wrap{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;margin-bottom:18px;}
+.tbl-top{display:flex;align-items:center;padding:11px 15px;border-bottom:1px solid var(--bdr);gap:10px;}
+.tbl-title{font-size:13px;font-weight:600;flex:1;}
+.tbl-cnt{font-family:var(--mono);font-size:11px;color:var(--t3);}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--bg-p);padding:9px 13px;text-align:left;font-size:10px;font-weight:600;color:var(--t3);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--bdr);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background var(--tr);cursor:pointer;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--bg-ch);}
+td{padding:10px 13px;font-size:12px;vertical-align:middle;}
+.td-name{font-weight:500;color:var(--t1);max-width:220px;}
+.td-name .sub{font-size:10px;color:var(--t3);font-family:var(--mono);margin-top:2px;}
+
+/* ── 배지 ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);white-space:nowrap;}
+.b-bl{background:var(--ac-d);color:var(--ac);border:1px solid rgba(59,130,246,.2);}
+.b-gn{background:var(--gn-d);color:var(--gn);border:1px solid rgba(16,185,129,.2);}
+.b-yl{background:var(--yl-d);color:var(--yl);border:1px solid rgba(245,158,11,.2);}
+.b-rd{background:var(--rd-d);color:var(--rd);border:1px solid rgba(239,68,68,.2);}
+.b-pp{background:var(--pp-d);color:var(--pp);border:1px solid rgba(139,92,246,.2);}
+.b-cy{background:var(--cy-d);color:var(--cy);border:1px solid rgba(6,182,212,.2);}
+.b-or{background:var(--or-d);color:var(--or);border:1px solid rgba(249,115,22,.2);}
+.b-gr{background:rgba(75,85,99,.15);color:var(--t3);border:1px solid var(--bdr);}
+
+/* ── 마감일 ── */
+.dl{font-family:var(--mono);font-size:11px;}
+.dl.urg{color:var(--rd);}
+.dl.soon{color:var(--yl);}
+.dl.ok{color:var(--t2);}
+.dl-d{font-size:10px;display:block;margin-top:1px;}
+
+/* ── 북마크 ── */
+.bm{background:none;border:none;cursor:pointer;font-size:14px;padding:3px 5px;border-radius:4px;opacity:.35;transition:all var(--tr);}
+.bm:hover{opacity:1;transform:scale(1.2);}
+.bm.on{opacity:1;filter:drop-shadow(0 0 4px gold);}
+
+/* ── 칸반 ── */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:20px;}
+.kb-col{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+.kb-head{padding:9px 11px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:6px;}
+.kb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.kb-title{font-size:11px;font-weight:600;flex:1;}
+.kb-cnt{font-family:var(--mono);font-size:10px;color:var(--t3);}
+.kb-body{padding:7px;min-height:60px;}
+.kb-card{background:var(--bg-p);border:1px solid var(--bdr);border-radius:var(--rs);padding:8px 9px;margin-bottom:5px;cursor:pointer;transition:all var(--tr);font-size:11px;}
+.kb-card:hover{border-color:var(--ac);background:var(--ac-d);}
+.kb-card-name{font-weight:500;color:var(--t1);margin-bottom:3px;line-height:1.4;}
+.kb-card-meta{font-size:10px;color:var(--t3);font-family:var(--mono);}
+
+/* ── 상태 선택 ── */
+.st-sel{background:var(--bg-c);border:1px solid var(--bdr);border-radius:4px;color:var(--t1);font-family:var(--mono);font-size:10px;padding:2px 5px;cursor:pointer;outline:none;}
+.st-sel option{background:var(--bg-c);}
+
+/* ── archive 뷰어 ── */
+.archive-grid{display:grid;grid-template-columns:200px 1fr;gap:16px;min-height:400px;}
+.archive-list{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+.archive-list-head{padding:10px 13px;border-bottom:1px solid var(--bdr);font-size:12px;font-weight:600;}
+.archive-item{padding:9px 13px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:all var(--tr);font-size:12px;}
+.archive-item:last-child{border-bottom:none;}
+.archive-item:hover{background:var(--bg-ch);}
+.archive-item.on{background:var(--ac-d);color:var(--ac);}
+.archive-date{font-family:var(--mono);font-weight:600;font-size:11px;}
+.archive-cnt{font-size:10px;color:var(--t3);margin-top:2px;}
+.archive-panel{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+
+/* ── 소스 관리 ── */
+.src-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.src-card{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all var(--tr);}
+.src-card.active{border-color:rgba(16,185,129,.2);background:rgba(16,185,129,.04);}
+.src-card.inactive{opacity:.6;}
+.src-ico{font-size:20px;flex-shrink:0;}
+.src-info{flex:1;}
+.src-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.src-desc{font-size:11px;color:var(--t3);}
+.src-meta{font-size:10px;color:var(--t3);font-family:var(--mono);margin-top:3px;}
+.toggle{width:38px;height:20px;background:var(--bdr-b);border-radius:20px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none;}
+.toggle.on{background:var(--gn);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;}
+.toggle.on::after{left:21px;}
+
+/* ── 모달 ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.overlay.on{display:flex;}
+.modal{background:var(--bg-p);border:1px solid var(--bdr-b);border-radius:14px;padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:mi .2s ease;}
+.modal.wide{width:680px;}
+@keyframes mi{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.m-title{font-size:15px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.frow.full{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.flbl{font-size:10px;font-weight:600;color:var(--t2);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;}
+.finp,.fsel{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);padding:8px 10px;color:var(--t1);font-size:12px;font-family:var(--sans);outline:none;transition:border-color var(--tr);width:100%;}
+.finp:focus,.fsel:focus{border-color:var(--ac);}
+.fsel option{background:var(--bg-c);}
+.ftxt{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);padding:8px 10px;color:var(--t1);font-size:12px;font-family:var(--sans);outline:none;width:100%;resize:vertical;min-height:65px;transition:border-color var(--tr);}
+.ftxt:focus{border-color:var(--ac);}
+.m-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+
+/* ── 체크리스트 ── */
+.cl-wrap{background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px;}
+.cl-item{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--bdr);cursor:pointer;}
+.cl-item:last-child{border-bottom:none;}
+.cl-cb{width:14px;height:14px;border-radius:3px;border:1px solid var(--bdr-b);background:var(--bg-p);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all var(--tr);}
+.cl-item.done .cl-cb{background:var(--gn);border-color:var(--gn);}
+.cl-item.done .cl-text{text-decoration:line-through;color:var(--t3);}
+.cl-text{font-size:12px;color:var(--t2);flex:1;}
+.cl-add{display:flex;gap:6px;margin-top:7px;}
+.cl-add input{flex:1;background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);padding:5px 9px;color:var(--t1);font-size:11px;outline:none;font-family:var(--sans);}
+
+/* ── 공고 상세 ── */
+.detail-field{margin-bottom:13px;}
+.detail-lbl{font-size:9px;color:var(--t3);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
+.detail-val{font-size:13px;color:var(--t1);}
+.detail-link{color:var(--ac);font-family:var(--mono);font-size:11px;text-decoration:none;}
+.detail-link:hover{text-decoration:underline;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+
+/* ── info box ── */
+.info-box{background:var(--ac-d);border:1px solid rgba(59,130,246,.2);border-radius:var(--rs);padding:9px 13px;font-size:12px;color:var(--t2);margin:8px 0;}
+.info-box.warn{background:var(--yl-d);border-color:rgba(245,158,11,.2);}
+.info-box.ok{background:var(--gn-d);border-color:rgba(16,185,129,.2);}
+
+/* ── 빈 상태 ── */
+.empty{text-align:center;padding:45px 20px;color:var(--t3);}
+.empty .ei{font-size:32px;margin-bottom:10px;opacity:.5;}
+.empty p{font-size:13px;}
+
+/* ── 토스트 ── */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg-c);border:1px solid var(--bdr-b);border-radius:var(--rs);padding:9px 15px;font-size:12px;z-index:999;transform:translateY(60px);opacity:0;transition:all .3s;}
+#toast.on{transform:translateY(0);opacity:1;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--bdr-b);border-radius:3px;}
+
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.kanban{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:1fr}}
+@media(max-width:800px){.sidebar{width:54px}.sidebar .logo-name,.sidebar .logo-ver,.ni .lbl,.ni .cnt,.sync-row span{display:none}.logo-row{justify-content:center}.ni{justify-content:center;padding:10px}.main{margin-left:54px}.stats{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:repeat(2,1fr)}.archive-grid{grid-template-columns:1fr}.frow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── 사이드바 ── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-row">
+      <div class="logo-gem">📡</div>
+      <div><div class="logo-name">공고 레이더</div><div class="logo-ver">v3 · STATIC EDITION</div></div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-sec">대시보드</div>
+    <div class="ni on" onclick="goTab('dash',this)"><span class="ico">🏠</span><span class="lbl">홈 대시보드</span></div>
+    <div class="ni" onclick="goTab('radar',this)"><span class="ico">📋</span><span class="lbl">공고 탐색</span><span class="cnt" id="nc-radar">-</span></div>
+    <div class="ni" onclick="goTab('proj',this)"><span class="ico">📁</span><span class="lbl">참여사업 관리</span><span class="cnt" id="nc-proj">0</span></div>
+    <div class="nav-sec">데이터</div>
+    <div class="ni" onclick="goTab('archive',this)"><span class="ico">🗂️</span><span class="lbl">누적 보관함</span></div>
+    <div class="ni" onclick="goTab('sources',this)"><span class="ico">⚙️</span><span class="lbl">소스 관리</span></div>
+    <div class="nav-sec">액션</div>
+    <div class="ni" onclick="fetchLatest()"><span class="ico">🔄</span><span class="lbl">최신 공고 로드</span></div>
+    <div class="ni" onclick="openProjModal()"><span class="ico">➕</span><span class="lbl">사업 추가</span></div>
+    <div class="ni" onclick="exportCSV()"><span class="ico">📤</span><span class="lbl">CSV 내보내기</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sync-row"><div class="sync-dot"></div><span id="sync-time">-</span></div>
+  </div>
+</aside>
+
+<!-- ── 메인 ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">정부지원사업 <em>레이더 v3</em></div>
+    <button class="btn btn-g btn-s" onclick="fetchLatest()">🔄 새로고침</button>
+    <button class="btn btn-p btn-s" onclick="openProjModal()">➕ 사업 추가</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on"  id="tab-dash"    onclick="goTab('dash',this)">🏠 대시보드</div>
+    <div class="tab"     id="tab-radar"   onclick="goTab('radar',this)">📋 공고 탐색</div>
+    <div class="tab"     id="tab-proj"    onclick="goTab('proj',this)">📁 참여사업</div>
+    <div class="tab"     id="tab-archive" onclick="goTab('archive',this)">🗂️ 누적 보관함</div>
+    <div class="tab"     id="tab-sources" onclick="goTab('sources',this)">⚙️ 소스 관리</div>
+  </div>
+
+  <!-- ══ 홈 대시보드 ══ -->
+  <div class="view on" id="view-dash">
+    <div id="data-banner-dash" class="data-banner loading">
+      <div class="db-ico">⏳</div>
+      <div class="db-txt"><div class="db-main">공고 데이터 로딩 중...</div><div class="db-sub">data/latest.json fetch 중</div></div>
+    </div>
+    <div class="stats">
+      <div class="sc bl"><div class="sc-lbl">공고 탐색</div><div class="sc-val" id="s-radar">-</div><div class="sc-sub">최신 수집 공고</div></div>
+      <div class="sc rd"><div class="sc-lbl">마감 7일 내</div><div class="sc-val" id="s-urg">-</div><div class="sc-sub">긴급 공고</div></div>
+      <div class="sc yl"><div class="sc-lbl">마감 30일 내</div><div class="sc-val" id="s-soon">-</div><div class="sc-sub">준비 필요</div></div>
+      <div class="sc gn"><div class="sc-lbl">참여사업</div><div class="sc-val" id="s-proj">0</div><div class="sc-sub">관리 중인 사업</div></div>
+      <div class="sc pp"><div class="sc-lbl">북마크</div><div class="sc-val" id="s-bm">0</div><div class="sc-sub">관심 공고</div></div>
+    </div>
+    <!-- 칸반 -->
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;">📊 참여사업 진행 현황</div>
+    <div class="kanban" id="kanban"></div>
+    <!-- 마감 임박 -->
+    <div class="tbl-wrap">
+      <div class="tbl-top"><div class="tbl-title">🔥 마감 30일 이내 공고</div><div class="tbl-cnt" id="urg-cnt">-</div></div>
+      <div style="overflow-x:auto;"><table><thead><tr><th>사업명</th><th>주관부처</th><th>마감일</th><th>소스</th><th>북마크</th></tr></thead><tbody id="urg-body"></tbody></table></div>
+      <div class="empty" id="urg-empty" style="display:none;padding:30px"><div class="ei">✅</div><p>임박 마감 없음</p></div>
+    </div>
+  </div>
+
+  <!-- ══ 공고 탐색 ══ -->
+  <div class="view" id="view-radar">
+    <div id="data-banner-radar" class="data-banner loading">
+      <div class="db-ico">⏳</div><div class="db-txt"><div class="db-main">공고 데이터 로딩 중...</div></div>
+    </div>
+    <div class="fbar">
+      <div class="sw"><span class="sw-ico">🔎</span><input id="radar-q" placeholder="사업명, 부처, 키워드 검색..." oninput="renderRadar()"></div>
+      <div class="chips">
+        <div class="chip on" onclick="setRC('all',this)">전체</div>
+        <div class="chip" onclick="setRC('기업마당',this)">기업마당</div>
+        <div class="chip" onclick="setRC('교육부',this)">교육부</div>
+        <div class="chip" onclick="setRC('urg',this)">🔥마감임박</div>
+        <div class="chip" onclick="setRC('bm',this)">⭐북마크</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <div class="tbl-top">
+        <div class="tbl-title">📋 공고 목록</div>
+        <div class="tbl-cnt" id="radar-cnt">-</div>
+        <div style="font-size:11px;color:var(--t3);font-family:var(--mono);" id="radar-updated"></div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table><thead><tr>
+          <th style="width:30px;"></th>
+          <th style="min-width:200px;">사업명</th>
+          <th style="min-width:100px;">주관부처</th>
+          <th style="min-width:100px;">마감일</th>
+          <th style="min-width:80px;">소스</th>
+          <th style="width:40px;"></th>
+        </tr></thead><tbody id="radar-body"></tbody></table>
+      </div>
+      <div class="empty" id="radar-empty" style="display:none">
+        <div class="ei">📭</div>
+        <p>공고 없음 — 상단 🔄 버튼으로 최신 데이터를 로드하세요</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 참여사업 관리 ══ -->
+  <div class="view" id="view-proj">
+    <div class="fbar">
+      <div class="sw"><span class="sw-ico">🔎</span><input id="proj-q" placeholder="사업명, 담당자 검색..." oninput="renderProj()"></div>
+      <div class="chips">
+        <div class="chip on" onclick="setPF('all',this)">전체</div>
+        <div class="chip" onclick="setPF('검토중',this)">검토중</div>
+        <div class="chip" onclick="setPF('준비중',this)">준비중</div>
+        <div class="chip" onclick="setPF('신청완료',this)">신청완료</div>
+        <div class="chip" onclick="setPF('결과대기',this)">결과대기</div>
+        <div class="chip" onclick="setPF('선정',this)">선정</div>
+        <div class="chip" onclick="setPF('탈락',this)">탈락</div>
+      </div>
+      <button class="btn btn-p btn-s" onclick="openProjModal()">➕ 추가</button>
+    </div>
+    <div class="tbl-wrap">
+      <div class="tbl-top"><div class="tbl-title">📁 참여사업 목록</div><div class="tbl-cnt" id="proj-cnt">0건</div></div>
+      <div style="overflow-x:auto;">
+        <table><thead><tr>
+          <th style="width:30px;"></th>
+          <th style="min-width:190px;">사업명</th>
+          <th style="min-width:100px;">주관부처</th>
+          <th style="min-width:95px;">마감일</th>
+          <th style="min-width:110px;">진행상태</th>
+          <th style="min-width:85px;">담당자</th>
+          <th style="min-width:80px;">분야</th>
+          <th style="width:65px;"></th>
+        </tr></thead><tbody id="proj-body"></tbody></table>
+      </div>
+      <div class="empty" id="proj-empty" style="display:none"><div class="ei">📭</div><p>등록된 참여사업 없음</p></div>
+    </div>
+  </div>
+
+  <!-- ══ 누적 보관함 ══ -->
+  <div class="view" id="view-archive">
+    <div class="info-box" style="margin-bottom:16px;">
+      🗂️ GitHub Actions가 매일 수집한 결과가 <code style="font-family:var(--mono);font-size:11px;">archive/</code> 폴더에 날짜별로 누적 저장됩니다.
+    </div>
+    <div class="archive-grid">
+      <div class="archive-list">
+        <div class="archive-list-head">📅 날짜별 보관함</div>
+        <div id="archive-list-body"><div class="empty" style="padding:20px"><p>로딩 중...</p></div></div>
+      </div>
+      <div class="archive-panel">
+        <div class="tbl-top"><div class="tbl-title" id="archive-panel-title">날짜를 선택하세요</div><div class="tbl-cnt" id="archive-panel-cnt"></div></div>
+        <div style="overflow-x:auto;">
+          <table><thead><tr><th>사업명</th><th>주관부처</th><th>마감일</th><th>소스</th></tr></thead>
+          <tbody id="archive-panel-body"></tbody></table>
+        </div>
+        <div class="empty" id="archive-panel-empty" style="display:none;padding:30px"><div class="ei">👈</div><p>좌측에서 날짜를 선택하세요</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 소스 관리 ══ -->
+  <div class="view" id="view-sources">
+    <div class="info-box" style="margin-bottom:16px;">
+      ⚙️ <strong>sources.json</strong> 파일로 크롤링 소스를 ON/OFF 관리합니다.
+      여기서 변경한 내용은 <strong>다음 GitHub Actions 실행</strong>에 반영됩니다.
+      저장소의 sources.json을 직접 수정하거나, 아래에서 설정 후 내보내기 하세요.
+    </div>
+    <div class="src-grid" id="src-grid"></div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-p btn-s" onclick="exportSources()">📤 sources.json 내보내기</button>
+      <button class="btn btn-g btn-s" onclick="loadSourcesJSON()">📥 sources.json 불러오기</button>
+      <input type="file" id="src-file" accept=".json" style="display:none" onchange="importSourcesFile(this)">
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- 참여사업 모달 -->
+<div class="overlay" id="proj-modal">
+  <div class="modal wide">
+    <div class="m-title" id="pm-title">➕ 참여사업 추가</div>
+    <div class="frow full"><div class="fg"><label class="flbl">사업명 *</label><input class="finp" id="pm-name" placeholder="사업명"></div></div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">주관부처</label><input class="finp" id="pm-min" placeholder="예: 과학기술정보통신부"></div>
+      <div class="fg"><label class="flbl">예산규모</label><input class="finp" id="pm-budget" placeholder="예: 과제당 2억원"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">신청마감일</label><input class="finp" id="pm-dl" type="date"></div>
+      <div class="fg"><label class="flbl">진행상태</label>
+        <select class="fsel" id="pm-st">
+          <option>검토중</option><option>준비중</option><option>신청완료</option>
+          <option>결과대기</option><option>선정</option><option>탈락</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">담당자</label><input class="finp" id="pm-mgr" placeholder="홍길동"></div>
+      <div class="fg"><label class="flbl">연락처</label><input class="finp" id="pm-tel" placeholder="010-0000-0000"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">분야</label>
+        <select class="fsel" id="pm-field">
+          <option value="R&D">R&D</option><option value="인력">인력양성</option>
+          <option value="산학">산학협력</option><option value="창업">창업</option>
+          <option value="국제">국제협력</option><option value="기타">기타</option>
+        </select>
+      </div>
+      <div class="fg"><label class="flbl">공고 URL</label><input class="finp" id="pm-url" placeholder="https://..."></div>
+    </div>
+    <div class="frow full"><div class="fg"><label class="flbl">내부 메모</label><textarea class="ftxt" id="pm-memo" placeholder="담당자 메모, 전략 등"></textarea></div></div>
+    <div style="margin-bottom:11px;">
+      <div class="flbl" style="margin-bottom:7px;">제출 서류 체크리스트</div>
+      <div class="cl-wrap" id="cl-list"></div>
+      <div class="cl-add"><input id="cl-inp" placeholder="서류명 입력 후 Enter" onkeydown="if(event.key==='Enter')addCL()"><button class="btn btn-g btn-s" onclick="addCL()">+ 추가</button></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-g" onclick="closeModal('proj-modal')">취소</button>
+      <button class="btn btn-danger btn-s" id="pm-del" onclick="delProj()" style="display:none;">🗑 삭제</button>
+      <button class="btn btn-p" onclick="saveProj()">💾 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 공고 상세 모달 -->
+<div class="overlay" id="detail-modal">
+  <div class="modal wide" id="detail-body"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  데이터 구조
+//  공고(GRANTS): JSON fetch → 메모리 (localStorage 저장 안 함)
+//  사용자 데이터(PROJ, BOOKMARKS): localStorage만 사용
+// ══════════════════════════════════════════════════════
+
+// ── 공고 데이터 (메모리, fetch로 갱신) ──
+let GRANTS = [];          // 현재 로드된 공고 전체
+let GRANTS_META = {};     // generated_at, sources 등
+
+// ── 사용자 개인 데이터 (localStorage만) ──
+let PROJ = JSON.parse(localStorage.getItem('gr_proj_v3') || '[]');
+let BOOKMARKS = JSON.parse(localStorage.getItem('gr_bm_v3') || '{}');    // {사업명: true}
+let USER_STATUS = JSON.parse(localStorage.getItem('gr_status_v3') || '{}'); // {사업명: 'status'}
+
+// ── 소스 설정 (메모리 + localStorage 캐시) ──
+let SOURCES = JSON.parse(localStorage.getItem('gr_sources_v3') || 'null');
+
+// ── UI 상태 ──
+let radarChip = 'all';
+let projFilter = 'all';
+let editProjId = null;
+let tempCL = [];
+
+function saveUserData() {
+  localStorage.setItem('gr_proj_v3',    JSON.stringify(PROJ));
+  localStorage.setItem('gr_bm_v3',      JSON.stringify(BOOKMARKS));
+  localStorage.setItem('gr_status_v3',  JSON.stringify(USER_STATUS));
+}
+function saveSources() {
+  localStorage.setItem('gr_sources_v3', JSON.stringify(SOURCES));
+}
+
+// ══════════════════════════════════════════════════════
+//  날짜 유틸
+// ══════════════════════════════════════════════════════
+function daysLeft(d) {
+  if (!d) return 9999;
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.ceil((new Date(d) - t) / 86400000);
+}
+function fmtDate(d) {
+  if (!d) return '-';
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return `${dt.getFullYear()}.${String(dt.getMonth()+1).padStart(2,'0')}.${String(dt.getDate()).padStart(2,'0')}`;
+}
+function dlBadge(d) {
+  const n = daysLeft(d);
+  if (n < 0)  return `<span class="dl ok">${fmtDate(d)}<span class="dl-d">마감됨</span></span>`;
+  if (n <= 7) return `<span class="dl urg">${fmtDate(d)}<span class="dl-d">D-${n} 🔥</span></span>`;
+  if (n <= 30)return `<span class="dl soon">${fmtDate(d)}<span class="dl-d">D-${n}</span></span>`;
+  return `<span class="dl ok">${fmtDate(d)}<span class="dl-d">D-${n}</span></span>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  JSON Fetch — 공고 데이터 로드
+// ══════════════════════════════════════════════════════
+const FETCH_PATHS = ['./data/latest.json', 'data/latest.json', '../data/latest.json'];
+
+async function fetchLatest(silent = false) {
+  if (!silent) setBanner('dash', 'loading', '⏳', '공고 데이터 로딩 중...', 'data/latest.json 불러오는 중');
+  if (!silent) setBanner('radar', 'loading', '⏳', '공고 데이터 로딩 중...', '');
+
+  let data = null;
+  for (const path of FETCH_PATHS) {
+    try {
+      const r = await fetch(path, { cache: 'no-store' });
+      if (r.ok) { data = await r.json(); break; }
+    } catch(_) {}
+  }
+
+  if (!data) {
+    // fetch 실패 → 로컬 CSV 가져오기 안내
+    setBanner('dash', 'err', '❌', 'latest.json 로드 실패', 'GitHub Pages 배포 후 data/latest.json이 존재해야 합니다. 로컬 실행 시 CSV를 직접 가져오세요.');
+    setBanner('radar', 'err', '❌', 'latest.json 로드 실패', '');
+    if (!silent) toast('❌ 공고 데이터 로드 실패');
+    return;
+  }
+
+  GRANTS = (data.items || []).map(g => ({
+    ...g,
+    _bm: !!BOOKMARKS[g['사업명']],
+  }));
+  GRANTS_META = { generated_at: data.generated_at, sources: data.sources, total: data.total };
+
+  const genAt = data.generated_at ? new Date(data.generated_at).toLocaleString('ko-KR') : '-';
+  setBanner('dash', 'ok', '✅', `${GRANTS.length}건 로드 완료`, `수집: ${genAt}`);
+  setBanner('radar', 'ok', '✅', `${GRANTS.length}건 로드 완료`, `수집: ${genAt}`);
+  document.getElementById('sync-time').textContent = genAt.slice(5, 16);
+
+  renderAll();
+  if (!silent) toast(`✅ ${GRANTS.length}건 로드 완료`);
+}
+
+function setBanner(view, type, ico, main, sub) {
+  const el = document.getElementById(`data-banner-${view}`);
+  if (!el) return;
+  el.className = `data-banner ${type}`;
+  el.innerHTML = `<div class="db-ico">${ico}</div><div class="db-txt"><div class="db-main">${main}</div><div class="db-sub">${sub}</div></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  탭 전환
+// ══════════════════════════════════════════════════════
+function goTab(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.querySelectorAll('.tab, .ni').forEach(t => t.classList.remove('on'));
+  document.getElementById('view-' + name).classList.add('on');
+  const tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('on');
+  if (el)  el.classList.add('on');
+  if (name === 'archive') loadArchiveIndex();
+  if (name === 'sources') renderSources();
+}
+
+// ══════════════════════════════════════════════════════
+//  렌더 전체
+// ══════════════════════════════════════════════════════
+function renderAll() { renderDash(); renderRadar(); renderProj(); updateNavCounts(); }
+
+function updateNavCounts() {
+  document.getElementById('nc-radar').textContent = GRANTS.length || '-';
+  document.getElementById('nc-proj').textContent  = PROJ.length;
+}
+
+// ── 홈 대시보드 ──
+function renderDash() {
+  const urg  = GRANTS.filter(g => { const n = daysLeft(g['마감일']); return n >= 0 && n <= 7; }).length;
+  const soon = GRANTS.filter(g => { const n = daysLeft(g['마감일']); return n > 7 && n <= 30; }).length;
+  const bm   = Object.values(BOOKMARKS).filter(Boolean).length;
+  document.getElementById('s-radar').textContent = GRANTS.length || '-';
+  document.getElementById('s-urg').textContent   = GRANTS.length ? urg : '-';
+  document.getElementById('s-soon').textContent  = GRANTS.length ? soon : '-';
+  document.getElementById('s-proj').textContent  = PROJ.length;
+  document.getElementById('s-bm').textContent    = bm;
+
+  // 칸반
+  const statuses = ['검토중','준비중','신청완료','결과대기','선정'];
+  const dotColors = { '검토중':'#4b5563','준비중':'#3b82f6','신청완료':'#06b6d4','결과대기':'#f59e0b','선정':'#10b981' };
+  document.getElementById('kanban').innerHTML = statuses.map(st => {
+    const items = PROJ.filter(p => p.status === st);
+    return `<div class="kb-col">
+      <div class="kb-head"><div class="kb-dot" style="background:${dotColors[st]}"></div><div class="kb-title">${st}</div><div class="kb-cnt">${items.length}</div></div>
+      <div class="kb-body">${items.length
+        ? items.map(p => `<div class="kb-card" onclick="openProjEdit(${p.id})">
+            <div class="kb-card-name">${p.name}</div>
+            <div class="kb-card-meta">${fmtDate(p.deadline)}</div></div>`).join('')
+        : '<div style="font-size:10px;color:var(--t3);text-align:center;padding:12px 0">없음</div>'
+      }</div></div>`;
+  }).join('');
+
+  // 마감 임박
+  const urgList = GRANTS
+    .filter(g => { const n = daysLeft(g['마감일']); return n >= 0 && n <= 30; })
+    .sort((a,b) => new Date(a['마감일']) - new Date(b['마감일']))
+    .slice(0, 20);
+  document.getElementById('urg-cnt').textContent = urgList.length + '건';
+  document.getElementById('urg-empty').style.display = urgList.length ? 'none' : 'block';
+  document.getElementById('urg-body').innerHTML = urgList.map(g => `
+    <tr onclick="showDetail(${JSON.stringify(g['사업명']).replace(/"/g,'&quot;')})">
+      <td class="td-name">${g['사업명']}</td>
+      <td style="color:var(--t2);font-size:11px;">${g['주관부처']||'-'}</td>
+      <td>${dlBadge(g['마감일'])}</td>
+      <td><span class="badge b-gr">${g['소스']||'-'}</span></td>
+      <td><button class="bm ${BOOKMARKS[g['사업명']]?'on':''}" onclick="event.stopPropagation();toggleBM('${g['사업명'].replace(/'/g,"\\'")}')">
+        ${BOOKMARKS[g['사업명']]?'⭐':'☆'}</button></td>
+    </tr>`).join('');
+}
+
+// ── 공고 탐색 ──
+function renderRadar() {
+  const q = (document.getElementById('radar-q')?.value||'').toLowerCase();
+  let list = [...GRANTS];
+
+  if (radarChip === 'bm')       list = list.filter(g => BOOKMARKS[g['사업명']]);
+  else if (radarChip === 'urg') list = list.filter(g => { const n=daysLeft(g['마감일']); return n>=0&&n<=7; });
+  else if (radarChip !== 'all') list = list.filter(g => (g['소스']||'').includes(radarChip));
+
+  if (q) list = list.filter(g =>
+    (g['사업명']||'').toLowerCase().includes(q) ||
+    (g['주관부처']||'').toLowerCase().includes(q) ||
+    (g['소스']||'').toLowerCase().includes(q)
+  );
+
+  document.getElementById('radar-cnt').textContent = list.length + '건';
+  if (GRANTS_META.generated_at) {
+    document.getElementById('radar-updated').textContent =
+      '수집: ' + new Date(GRANTS_META.generated_at).toLocaleString('ko-KR').slice(0,16);
+  }
+
+  const empty = document.getElementById('radar-empty');
+  const tbody = document.getElementById('radar-body');
+  empty.style.display = list.length ? 'none' : 'block';
+  tbody.innerHTML = list.slice(0, 300).map(g => `
+    <tr onclick="showDetail('${g['사업명'].replace(/'/g,"\\'")}')">
+      <td><button class="bm ${BOOKMARKS[g['사업명']]?'on':''}"
+          onclick="event.stopPropagation();toggleBM('${g['사업명'].replace(/'/g,"\\'")}')">
+        ${BOOKMARKS[g['사업명']]?'⭐':'☆'}</button></td>
+      <td class="td-name">${g['사업명']}</td>
+      <td style="color:var(--t2);font-size:11px;">${g['주관부처']||'-'}</td>
+      <td>${dlBadge(g['마감일'])}</td>
+      <td><span class="badge b-gr">${g['소스']||'-'}</span></td>
+      <td>${g['상세링크']&&g['상세링크']!=='https://www.moe.go.kr'
+        ?`<a href="${g['상세링크']}" target="_blank" class="btn btn-g btn-s" onclick="event.stopPropagation()" style="text-decoration:none;">🔗</a>`
+        :''}</td>
+    </tr>`).join('');
+  if (list.length > 300) {
+    tbody.innerHTML += `<tr><td colspan="6" style="text-align:center;padding:10px;color:var(--t3);font-size:11px;">
+      상위 300건 표시 중 (전체 ${list.length}건) — 검색어로 좁혀보세요</td></tr>`;
+  }
+}
+
+function setRC(chip, el) {
+  radarChip = chip;
+  document.querySelectorAll('#view-radar .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  renderRadar();
+}
+
+// ── 북마크 (localStorage) ──
+function toggleBM(name) {
+  BOOKMARKS[name] = !BOOKMARKS[name];
+  if (!BOOKMARKS[name]) delete BOOKMARKS[name];
+  saveUserData();
+  renderAll();
+}
+
+// ── 공고 상세 ──
+function showDetail(name) {
+  const g = GRANTS.find(x => x['사업명'] === name);
+  if (!g) return;
+  const n = daysLeft(g['마감일']);
+  const urgTag = n >= 0 && n <= 7 ? `<span class="badge b-rd">🔥 D-${n}</span>` :
+                 n >= 0 && n <= 30 ? `<span class="badge b-yl">⏰ D-${n}</span>` : '';
+  document.getElementById('detail-body').innerHTML = `
+    <div class="m-title">📋 공고 상세 ${urgTag}</div>
+    <div class="detail-field"><div class="detail-lbl">사업명</div>
+      <div class="detail-val" style="font-size:15px;font-weight:700;">${g['사업명']}</div></div>
+    <div class="detail-grid">
+      <div class="detail-field"><div class="detail-lbl">주관부처</div><div class="detail-val">${g['주관부처']||'-'}</div></div>
+      <div class="detail-field"><div class="detail-lbl">마감일</div><div class="detail-val" style="font-family:var(--mono);">${fmtDate(g['마감일'])}</div></div>
+      <div class="detail-field"><div class="detail-lbl">소스</div><div class="detail-val">${g['소스']||'-'}</div></div>
+      <div class="detail-field"><div class="detail-lbl">수집일시</div><div class="detail-val" style="font-size:11px;color:var(--t3);">${g['수집일시']||'-'}</div></div>
+    </div>
+    ${g['상세링크']?`<div class="detail-field"><div class="detail-lbl">공고 URL</div>
+      <a href="${g['상세링크']}" target="_blank" class="detail-link">${g['상세링크']} ↗</a></div>`:''}
+    <div class="m-foot">
+      <button class="btn btn-g" onclick="closeModal('detail-modal')">닫기</button>
+      <button class="btn btn-g btn-s" onclick="toggleBM('${name.replace(/'/g,"\\'")}');closeModal('detail-modal')">
+        ${BOOKMARKS[name]?'⭐ 북마크 해제':'☆ 북마크'}</button>
+      ${g['상세링크']?`<button class="btn btn-p" onclick="window.open('${g['상세링크']}','_blank')">🔗 공고 바로가기</button>`:''}
+    </div>`;
+  document.getElementById('detail-modal').classList.add('on');
+}
+
+// ══════════════════════════════════════════════════════
+//  참여사업 관리 (localStorage)
+// ══════════════════════════════════════════════════════
+const ST_BADGE = {'검토중':'b-gr','준비중':'b-bl','신청완료':'b-cy','결과대기':'b-yl','선정':'b-gn','탈락':'b-rd'};
+const FD_BADGE = {'R&D':'b-pp','인력':'b-bl','산학':'b-gn','창업':'b-or','국제':'b-cy','기타':'b-gr'};
+
+function renderProj() {
+  const q = (document.getElementById('proj-q')?.value||'').toLowerCase();
+  let list = [...PROJ];
+  if (projFilter !== 'all') list = list.filter(p => p.status === projFilter);
+  if (q) list = list.filter(p => (p.name||'').toLowerCase().includes(q)||(p.manager||'').toLowerCase().includes(q));
+  list.sort((a,b) => new Date(a.deadline)-new Date(b.deadline));
+
+  document.getElementById('proj-cnt').textContent = list.length + '건';
+  const empty = document.getElementById('proj-empty');
+  const tbody = document.getElementById('proj-body');
+  empty.style.display = list.length ? 'none' : 'block';
+  tbody.innerHTML = list.map(p => `
+    <tr onclick="openProjEdit(${p.id})">
+      <td><button class="bm ${p.bookmarked?'on':''}" onclick="event.stopPropagation();toggleProjBM(${p.id})">
+        ${p.bookmarked?'⭐':'☆'}</button></td>
+      <td class="td-name">${p.name}</td>
+      <td style="color:var(--t2);font-size:11px;">${p.ministry||'-'}</td>
+      <td>${dlBadge(p.deadline)}</td>
+      <td onclick="event.stopPropagation()">
+        <select class="st-sel" onchange="changeSt(${p.id},this.value)">
+          ${['검토중','준비중','신청완료','결과대기','선정','탈락'].map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td style="font-size:11px;color:var(--t2);">${p.manager||'-'}</td>
+      <td><span class="badge ${FD_BADGE[p.field]||'b-gr'}">${p.field||'-'}</span></td>
+      <td onclick="event.stopPropagation()">
+        <button class="btn btn-g btn-s" onclick="openProjEdit(${p.id})">✏️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function setPF(f, el) {
+  projFilter = f;
+  document.querySelectorAll('#view-proj .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  renderProj();
+}
+function changeSt(id, val) {
+  const p = PROJ.find(x => x.id === id);
+  if (p) { p.status = val; saveUserData(); renderAll(); }
+}
+function toggleProjBM(id) {
+  const p = PROJ.find(x => x.id === id);
+  if (p) { p.bookmarked = !p.bookmarked; saveUserData(); renderProj(); }
+}
+
+// ── 참여사업 모달 ──
+function openProjModal() {
+  editProjId = null; tempCL = [];
+  document.getElementById('pm-title').textContent = '➕ 참여사업 추가';
+  document.getElementById('pm-del').style.display = 'none';
+  ['pm-name','pm-min','pm-budget','pm-mgr','pm-tel','pm-url','pm-memo'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('pm-dl').value = '';
+  document.getElementById('pm-st').value = '검토중';
+  document.getElementById('pm-field').value = 'R&D';
+  renderCL();
+  document.getElementById('proj-modal').classList.add('on');
+}
+function openProjEdit(id) {
+  const p = PROJ.find(x => x.id === id); if (!p) return;
+  editProjId = id; tempCL = JSON.parse(JSON.stringify(p.checklist||[]));
+  document.getElementById('pm-title').textContent = '✏️ 참여사업 수정';
+  document.getElementById('pm-del').style.display = 'inline-flex';
+  document.getElementById('pm-name').value   = p.name||'';
+  document.getElementById('pm-min').value    = p.ministry||'';
+  document.getElementById('pm-budget').value = p.budget||'';
+  document.getElementById('pm-dl').value     = p.deadline||'';
+  document.getElementById('pm-st').value     = p.status||'검토중';
+  document.getElementById('pm-mgr').value    = p.manager||'';
+  document.getElementById('pm-tel').value    = p.contact||'';
+  document.getElementById('pm-field').value  = p.field||'R&D';
+  document.getElementById('pm-url').value    = p.url||'';
+  document.getElementById('pm-memo').value   = p.memo||'';
+  renderCL();
+  document.getElementById('proj-modal').classList.add('on');
+}
+function saveProj() {
+  const name = document.getElementById('pm-name').value.trim();
+  if (!name) { toast('⚠️ 사업명 필수'); return; }
+  const entry = {
+    id: editProjId || Date.now(),
+    name, ministry: document.getElementById('pm-min').value,
+    budget: document.getElementById('pm-budget').value,
+    deadline: document.getElementById('pm-dl').value,
+    status: document.getElementById('pm-st').value,
+    manager: document.getElementById('pm-mgr').value,
+    contact: document.getElementById('pm-tel').value,
+    field: document.getElementById('pm-field').value,
+    url: document.getElementById('pm-url').value,
+    memo: document.getElementById('pm-memo').value,
+    checklist: JSON.parse(JSON.stringify(tempCL)),
+    bookmarked: editProjId ? (PROJ.find(p=>p.id===editProjId)?.bookmarked||false) : false,
+  };
+  if (editProjId) { const i = PROJ.findIndex(p=>p.id===editProjId); if(i>-1) PROJ[i]=entry; }
+  else PROJ.unshift(entry);
+  saveUserData(); renderAll();
+  closeModal('proj-modal');
+  toast(editProjId ? '✅ 수정됐습니다' : '✅ 추가됐습니다');
+}
+function delProj() {
+  if (!editProjId||!confirm('삭제할까요?')) return;
+  PROJ = PROJ.filter(p=>p.id!==editProjId);
+  saveUserData(); renderAll();
+  closeModal('proj-modal'); toast('🗑️ 삭제됐습니다');
+}
+
+// ── 체크리스트 ──
+function renderCL() {
+  const wrap = document.getElementById('cl-list');
+  wrap.innerHTML = tempCL.length
+    ? tempCL.map((c,i)=>`<div class="cl-item ${c.done?'done':''}" onclick="toggleCL(${i})">
+        <div class="cl-cb">${c.done?'✓':''}</div>
+        <div class="cl-text">${c.text}</div>
+        <button onclick="event.stopPropagation();removeCL(${i})" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px;padding:0 3px;">✕</button>
+      </div>`).join('')
+    : '<div style="font-size:11px;color:var(--t3);padding:6px 0;">항목 없음 — 아래에서 추가하세요</div>';
+}
+function toggleCL(i) { tempCL[i].done=!tempCL[i].done; renderCL(); }
+function removeCL(i) { tempCL.splice(i,1); renderCL(); }
+function addCL() {
+  const inp=document.getElementById('cl-inp');
+  const txt=inp.value.trim(); if(!txt) return;
+  tempCL.push({text:txt,done:false}); inp.value=''; renderCL();
+}
+
+// ══════════════════════════════════════════════════════
+//  Archive 뷰어
+// ══════════════════════════════════════════════════════
+async function loadArchiveIndex() {
+  const body = document.getElementById('archive-list-body');
+  body.innerHTML = '<div class="empty" style="padding:20px"><p>⏳ 로딩 중...</p></div>';
+
+  let index = null;
+  for (const path of ['./data/archive_index.json','data/archive_index.json']) {
+    try {
+      const r = await fetch(path, {cache:'no-store'});
+      if (r.ok) { index = await r.json(); break; }
+    } catch(_) {}
+  }
+
+  if (!index || !index.archives?.length) {
+    body.innerHTML = `<div class="empty" style="padding:20px">
+      <div class="ei">📭</div>
+      <p>archive 없음<br><span style="font-size:10px;">GitHub Actions 실행 후 생성됩니다</span></p></div>`;
+    return;
+  }
+
+  body.innerHTML = index.archives.map((a,i) => `
+    <div class="archive-item ${i===0?'on':''}" onclick="loadArchiveDate('${a.file}', this, '${a.date}')">
+      <div class="archive-date">${a.date}</div>
+      <div class="archive-cnt">${a.total}건</div>
+    </div>`).join('');
+
+  if (index.archives[0]) {
+    loadArchiveDate(index.archives[0].file, body.querySelector('.archive-item'), index.archives[0].date);
+  }
+}
+
+async function loadArchiveDate(file, el, date) {
+  document.querySelectorAll('.archive-item').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('archive-panel-title').textContent = `📅 ${date}`;
+  document.getElementById('archive-panel-body').innerHTML = '';
+  document.getElementById('archive-panel-empty').style.display = 'none';
+  document.getElementById('archive-panel-cnt').textContent = '로딩 중...';
+
+  let data = null;
+  for (const prefix of ['./', '']) {
+    try {
+      const r = await fetch(`${prefix}${file}`, {cache:'no-store'});
+      if (r.ok) { data = await r.json(); break; }
+    } catch(_) {}
+  }
+
+  if (!data) {
+    document.getElementById('archive-panel-cnt').textContent = '로드 실패';
+    return;
+  }
+
+  const items = data.items || [];
+  document.getElementById('archive-panel-cnt').textContent = `${items.length}건`;
+  document.getElementById('archive-panel-empty').style.display = items.length ? 'none' : 'block';
+  document.getElementById('archive-panel-body').innerHTML = items.slice(0, 200).map(g => `
+    <tr>
+      <td class="td-name">${g['사업명']}</td>
+      <td style="color:var(--t2);font-size:11px;">${g['주관부처']||'-'}</td>
+      <td>${dlBadge(g['마감일'])}</td>
+      <td><span class="badge b-gr">${g['소스']||'-'}</span></td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  소스 관리
+// ══════════════════════════════════════════════════════
+const DEFAULT_SOURCES = [
+  {source:'기업마당',enabled:true,description:'중소벤처기업부 기업마당 API',type:'api',pages:5,note:'API 키 필요'},
+  {source:'교육부_사업공고',enabled:true,description:'교육부 사업공고 게시판',type:'crawl',pages:5,board_id:'72761',note:''},
+  {source:'교육부_공지사항',enabled:true,description:'교육부 공지사항',type:'crawl',pages:3,board_id:'316',note:''},
+  {source:'IRIS',enabled:false,description:'범부처통합연구지원시스템',type:'crawl',pages:3,note:'구현 예정'},
+  {source:'NRF',enabled:false,description:'한국연구재단',type:'crawl',pages:3,note:'구현 예정'},
+  {source:'K-Startup',enabled:false,description:'창업진흥원',type:'crawl',pages:3,note:'구현 예정'},
+  {source:'대전TP',enabled:false,description:'대전테크노파크',type:'crawl',pages:2,note:'구현 예정'},
+  {source:'충남경제진흥원',enabled:false,description:'충남경제진흥원',type:'crawl',pages:2,note:'구현 예정'},
+];
+if (!SOURCES) { SOURCES = JSON.parse(JSON.stringify(DEFAULT_SOURCES)); saveSources(); }
+
+const SRC_ICO = {api:'🔌',crawl:'🕷️'};
+function renderSources() {
+  document.getElementById('src-grid').innerHTML = SOURCES.map((s,i) => `
+    <div class="src-card ${s.enabled?'active':'inactive'}">
+      <div class="src-ico">${SRC_ICO[s.type]||'📡'}</div>
+      <div class="src-info">
+        <div class="src-name">${s.source}</div>
+        <div class="src-desc">${s.description||''}</div>
+        <div class="src-meta">${s.type==='api'?'API':'크롤링'} · ${s.pages||'-'}페이지${s.note?' · '+s.note:''}</div>
+      </div>
+      <button class="toggle ${s.enabled?'on':''}" onclick="toggleSource(${i})" title="${s.enabled?'비활성화':'활성화'}"></button>
+    </div>`).join('');
+}
+function toggleSource(i) {
+  SOURCES[i].enabled = !SOURCES[i].enabled;
+  saveSources(); renderSources();
+  toast(`${SOURCES[i].source} ${SOURCES[i].enabled?'활성화':'비활성화'}`);
+}
+function exportSources() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(SOURCES,null,2)],{type:'application/json'}));
+  a.download = 'sources.json'; a.click();
+  toast('📤 sources.json 내보내기 완료 — 저장소에 업로드하세요');
+}
+function loadSourcesJSON() { document.getElementById('src-file').click(); }
+function importSourcesFile(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) { toast('❌ 올바른 sources.json 형식이 아닙니다'); return; }
+      SOURCES = data; saveSources(); renderSources();
+      toast(`✅ sources.json 로드 완료 (${data.length}개 소스)`);
+    } catch(_) { toast('❌ JSON 파싱 오류'); }
+  };
+  r.readAsText(file, 'UTF-8');
+}
+
+// ══════════════════════════════════════════════════════
+//  CSV 내보내기
+// ══════════════════════════════════════════════════════
+function exportCSV() {
+  const all = [
+    ...GRANTS.map(g => (['공고탐색',g['사업명'],g['주관부처'],'',g['마감일'],'','','',g['소스'],g['상세링크'],''])),
+    ...PROJ.map(p => (['참여사업',p.name,p.ministry,p.budget,p.deadline,p.status,p.manager,p.contact,p.field,p.url,p.memo])),
+  ];
+  const h = ['구분','사업명','주관부처','예산규모','마감일','상태','담당자','연락처','분야/소스','URL','메모'];
+  const csv = [h,...all].map(r=>r.map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = `공고레이더_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  toast('📤 CSV 내보내기 완료');
+}
+
+// ══════════════════════════════════════════════════════
+//  공통
+// ══════════════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 2800);
+}
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('on'); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.overlay').forEach(m=>m.classList.remove('on'));
+});
+
+// ══════════════════════════════════════════════════════
+//  초기화
+// ══════════════════════════════════════════════════════
+(async () => {
+  renderAll();
+  renderSources();
+  await fetchLatest(true);  // 자동 로드 (조용히)
+})();
+</script>
+</body>
+</html>
