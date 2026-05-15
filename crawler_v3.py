@@ -212,36 +212,44 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
 
         try:
             data = res.json()
+            logger.debug(f"   응답 키: {list(data.keys()) if isinstance(data, dict) else type(data)}")
 
-            # bizinfo API 응답 구조: {jsonArray: {item: [...], ...}}
-            json_arr = data.get("jsonArray", {})
-            raw_items = json_arr.get("item", [])
+            # bizinfo API 응답 구조 파악 (방어적 처리)
+            # 가능한 구조: {jsonArray: {item:[...]}} 또는 {jsonArray: [{item:[...]}]}
+            json_arr = data.get("jsonArray", data) if isinstance(data, dict) else data
+
+            # jsonArray가 리스트인 경우 첫 번째 요소 사용
+            if isinstance(json_arr, list):
+                json_arr = json_arr[0] if json_arr else {}
+
+            raw_items = json_arr.get("item", []) if isinstance(json_arr, dict) else []
 
             # item이 단일 dict인 경우 리스트로 변환
             if isinstance(raw_items, dict):
                 raw_items = [raw_items]
             items = raw_items if isinstance(raw_items, list) else []
 
-            # totCnt는 각 item 안에 있음
-            total = int(items[0].get("totCnt", 0)) if items else 0
-
             if not items:
                 logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
+                logger.debug(f"   json_arr 타입: {type(json_arr)}, raw_items 타입: {type(raw_items)}")
                 break
+
+            # totCnt는 각 item 안에 있음 (item이 dict인 경우만)
+            first = items[0]
+            total = int(first.get("totCnt", 0)) if isinstance(first, dict) else 0
 
             page_results = []
             for item in items:
-                # bizinfo API 실제 필드명 (문서 기준)
+                if not isinstance(item, dict):
+                    continue
                 title    = str(item.get("pblancNm", item.get("title", ""))).strip()
                 if not title:
                     continue
                 ministry = str(item.get("jrsdInsttNm", item.get("author", ""))).strip()
                 pid      = str(item.get("pblancId",    item.get("seq", ""))).strip()
-                # 마감일: reqstBeginEndDe = "20220727 ~ 20220930" → 종료일 추출
                 period   = str(item.get("reqstBeginEndDe", item.get("reqstDt", ""))).strip()
                 deadline = period.split("~")[-1].strip() if "~" in period else period
 
-                # 상세링크
                 if pid:
                     detail_url = (f"https://www.bizinfo.go.kr/web/lay1/bbs/"
                                   f"S1T122C128/AS/74/view.do?pblancId={pid}")
@@ -259,12 +267,12 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
             results.extend(page_results)
             logger.info(f"   └ {page}페이지: {len(page_results)}건 (전체 {total}건)")
 
-            if not page_results or page * Config.BIZINFO_ROWS >= total:
+            if not page_results or (total > 0 and page * Config.BIZINFO_ROWS >= total):
                 break
 
         except Exception as e:
             logger.error(f"   └ {page}페이지 파싱 오류: {e}")
-            logger.debug(f"   응답: {res.text[:200]}")
+            logger.debug(f"   응답: {res.text[:300]}")
 
         time.sleep(Config.PAGE_DELAY)
 
