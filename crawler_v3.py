@@ -74,7 +74,8 @@ ARCHIVE_DIR.mkdir(exist_ok=True)
 # [4] 설정 (Config)
 # ──────────────────────────────────────────────
 class Config:
-    BIZINFO_API_KEY:  str = os.environ.get("BIZINFO_API_KEY", "")
+    BIZINFO_API_KEY:   str = os.environ.get("BIZINFO_API_KEY", "")
+    KSTARTUP_API_KEY:  str = os.environ.get("KSTARTUP_API_KEY", "")
     SLACK_WEBHOOK_URL: str = os.environ.get("SLACK_WEBHOOK_URL", "")
 
     # bizinfo.go.kr 자체 API (data.go.kr 경유 아님)
@@ -400,8 +401,91 @@ def handler_nrf(source_cfg: dict) -> list[dict]:
     return []
 
 def handler_kstartup(source_cfg: dict) -> list[dict]:
-    logger.info("ℹ️  K-Startup 핸들러 미구현")
-    return []
+    """
+    K-Startup 창업지원사업 공고 API 수집
+    엔드포인트: https://apis.data.go.kr/B552735/kisedKstartupService01/getAnnouncementInformation01
+    응답 필드: biz_pbanc_nm, pbanc_ntrp_nm, pbanc_rcpt_end_dt, detl_pg_url, pbanc_sn
+    """
+    api_key = os.environ.get("KSTARTUP_API_KEY", "")
+    if not api_key:
+        logger.warning("⚠️  KSTARTUP_API_KEY 없음 → K-Startup 건너뜀")
+        return []
+
+    pages = source_cfg.get("pages", 10)
+    rows  = source_cfg.get("rows", 100)
+    URL   = "https://apis.data.go.kr/B552735/kisedKstartupService01/getAnnouncementInformation01"
+    logger.info(f"🚀 K-Startup API ({pages}페이지 × {rows}건)")
+    results = []
+
+    for page in range(1, pages + 1):
+        params = {
+            "ServiceKey":  api_key,
+            "page":        page,
+            "perPage":     rows,
+            "returnType":  "json",
+        }
+        res = safe_get(URL, params=params)
+        if not res:
+            continue
+
+        try:
+            data = res.json()
+
+            # 응답 구조: {currentCount, data:[...], matchCount, page, perPage, totalCount}
+            items = data.get("data", [])
+            if isinstance(items, dict):
+                items = [items]
+            if not items:
+                logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
+                break
+
+            total = int(data.get("totalCount", data.get("matchCount", 0)))
+            page_results = []
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+
+                # 문서 기준 정확한 필드명
+                title    = str(item.get("biz_pbanc_nm", "")).strip()
+                if not title:
+                    continue
+                ministry = str(item.get("pbanc_ntrp_nm", item.get("sprv_inst", "창업진흥원"))).strip()
+
+                # 마감일: pbanc_rcpt_end_dt = "2012-12-01 00:00:00"
+                deadline_raw = str(item.get("pbanc_rcpt_end_dt", "")).strip()
+                deadline = deadline_raw[:10] if deadline_raw else ""  # YYYY-MM-DD만 추출
+
+                # 상세링크: detl_pg_url (https:// 없을 수 있음)
+                url = str(item.get("detl_pg_url", "")).strip()
+                if url and not url.startswith("http"):
+                    url = "https://" + url
+                if not url:
+                    sn = str(item.get("pbanc_sn", "")).strip()
+                    url = (f"https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do"
+                           f"?schM=view&pbancSn={sn}") if sn else "https://www.k-startup.go.kr"
+
+                page_results.append({
+                    "소스":     "K-Startup",
+                    "사업명":   title,
+                    "주관부처": ministry,
+                    "마감일":   normalize_date(deadline),
+                    "상세링크": url,
+                })
+
+            results.extend(page_results)
+            logger.info(f"   └ {page}페이지: {len(page_results)}건 (전체 {total}건)")
+
+            if not page_results or (total > 0 and page * rows >= total):
+                break
+
+        except Exception as e:
+            logger.error(f"   └ {page}페이지 파싱 오류: {e}")
+            logger.debug(f"   응답: {res.text[:300]}")
+
+        time.sleep(Config.PAGE_DELAY)
+
+    logger.info(f"   ✅ K-Startup 합계: {len(results)}건")
+    return results
 
 def handler_daejeon_tp(source_cfg: dict) -> list[dict]:
     logger.info("ℹ️  대전TP 핸들러 미구현")
