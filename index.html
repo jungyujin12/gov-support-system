@@ -281,7 +281,9 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
     <div class="ni" onclick="goTab('archive',this)"><span class="ico">🗂️</span><span class="lbl">누적 보관함</span></div>
     <div class="ni" onclick="goTab('sources',this)"><span class="ico">⚙️</span><span class="lbl">소스 관리</span></div>
     <div class="nav-sec">액션</div>
+    <div class="ni" id="nav-cal" onclick="goTab('cal',this)"><span class="ico">📅</span><span class="lbl">달력</span></div>
     <div class="ni" onclick="fetchLatest()"><span class="ico">🔄</span><span class="lbl">최신 공고 로드</span></div>
+    <div class="ni" onclick="openTriggerModal()"><span class="ico">⚡</span><span class="lbl">수집 즉시 실행</span></div>
     <div class="ni" onclick="openProjModal()"><span class="ico">➕</span><span class="lbl">사업 추가</span></div>
     <div class="ni" onclick="exportCSV()"><span class="ico">📤</span><span class="lbl">CSV 내보내기</span></div>
   </nav>
@@ -295,12 +297,14 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
   <div class="topbar">
     <div class="topbar-title">정부지원사업 <em>레이더 v3</em></div>
     <button class="btn btn-g btn-s" onclick="fetchLatest()">🔄 새로고침</button>
+    <button class="btn btn-g btn-s" onclick="openTriggerModal()" title="GitHub Actions 즉시 실행">⚡ 수집 실행</button>
     <button class="btn btn-p btn-s" onclick="openProjModal()">➕ 사업 추가</button>
   </div>
 
   <div class="tabs">
     <div class="tab on"  id="tab-dash"    onclick="goTab('dash',this)">🏠 대시보드</div>
     <div class="tab"     id="tab-radar"   onclick="goTab('radar',this)">📋 공고 탐색</div>
+    <div class="tab"     id="tab-cal"     onclick="goTab('cal',this)">📅 달력</div>
     <div class="tab"     id="tab-proj"    onclick="goTab('proj',this)">📁 참여사업</div>
     <div class="tab"     id="tab-archive" onclick="goTab('archive',this)">🗂️ 누적 보관함</div>
     <div class="tab"     id="tab-sources" onclick="goTab('sources',this)">⚙️ 소스 관리</div>
@@ -319,6 +323,15 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
       <div class="sc gn"><div class="sc-lbl">참여사업</div><div class="sc-val" id="s-proj">0</div><div class="sc-sub">관리 중인 사업</div></div>
       <div class="sc pp"><div class="sc-lbl">북마크</div><div class="sc-val" id="s-bm">0</div><div class="sc-sub">관심 공고</div></div>
     </div>
+    <!-- 새 공고 -->
+    <div id="new-section" style="margin-bottom:18px;display:none;">
+      <div class="tbl-top"><div class="tbl-title">🆕 오늘 새 공고 <span id="new-cnt" class="badge b-bl" style="font-size:10px;margin-left:6px;vertical-align:middle;"></span></div>
+        <button class="btn btn-g btn-s" onclick="setRC('new',document.querySelector('.chip'));goTab('radar',document.getElementById('tab-radar'))">전체 보기</button>
+      </div>
+      <div style="overflow-x:auto;"><table><thead><tr><th>사업명</th><th>주관부처</th><th>마감일</th><th>소스</th></tr></thead>
+      <tbody id="new-body"></tbody></table></div>
+    </div>
+
     <!-- 칸반 -->
     <div style="font-size:13px;font-weight:600;margin-bottom:10px;">📊 참여사업 진행 현황</div>
     <div class="kanban" id="kanban"></div>
@@ -339,11 +352,32 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
       <div class="sw"><span class="sw-ico">🔎</span><input id="radar-q" placeholder="사업명, 부처, 키워드 검색..." oninput="renderRadar()"></div>
       <div class="chips">
         <div class="chip on" onclick="setRC('all',this)">전체</div>
+        <div class="chip" onclick="setRC('new',this)">🆕 새 공고</div>
+        <div class="chip" onclick="setRC('bm',this)">⭐ 북마크</div>
+        <div class="chip" onclick="setRC('urg',this)">🔥 마감임박</div>
         <div class="chip" onclick="setRC('기업마당',this)">기업마당</div>
         <div class="chip" onclick="setRC('교육부',this)">교육부</div>
-        <div class="chip" onclick="setRC('urg',this)">🔥마감임박</div>
-        <div class="chip" onclick="setRC('bm',this)">⭐북마크</div>
+        <div class="chip" onclick="setRC('K-Startup',this)">K-Startup</div>
+        <div class="chip" onclick="setRC('과기부',this)">과기부</div>
       </div>
+    </div>
+    <!-- 옵션 바 -->
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding:8px 12px;background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);">
+      <label style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;cursor:pointer;">
+        <input type="checkbox" id="hide-expired" onchange="renderRadar()" style="accent-color:var(--ac);">
+        마감 공고 숨기기
+      </label>
+      <div style="width:1px;height:14px;background:var(--bdr);"></div>
+      <label style="font-size:11px;color:var(--t2);">정렬:</label>
+      <select id="radar-sort" onchange="renderRadar()" style="background:var(--bg);border:1px solid var(--bdr);color:var(--t1);padding:3px 8px;border-radius:var(--rs);font-size:11px;">
+        <option value="deadline">마감임박순</option>
+        <option value="newest">최신수집순</option>
+        <option value="source">소스별</option>
+      </select>
+      <div style="width:1px;height:14px;background:var(--bdr);"></div>
+      <label style="font-size:11px;color:var(--t2);">🔑 관심키워드:</label>
+      <input id="kw-input" type="text" placeholder="산학협력,BK21,LINC..." style="background:var(--bg);border:1px solid var(--bdr);color:var(--t1);padding:3px 8px;border-radius:var(--rs);font-size:11px;width:200px;" oninput="saveKeywords();renderRadar()">
+      <span id="kw-count" style="font-size:10px;color:var(--ac);font-weight:600;"></span>
     </div>
     <div class="tbl-wrap">
       <div class="tbl-top">
@@ -402,6 +436,38 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
   </div>
 
   <!-- ══ 누적 보관함 ══ -->
+  <!-- ───────── 달력 뷰 ───────── -->
+  <div class="view" id="view-cal">
+    <div id="data-banner-cal" class="data-banner loading">
+      <div class="db-ico">⏳</div><div class="db-txt"><div class="db-main">공고 데이터 로딩 중...</div></div>
+    </div>
+
+    <!-- 달력 헤더 -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="calPrev()">◀ 이전달</button>
+      <div id="cal-title" style="font-size:17px;font-weight:700;flex:1;text-align:center;"></div>
+      <button class="btn btn-g" onclick="calNext()">다음달 ▶</button>
+      <button class="btn btn-g btn-s" onclick="calToday()">오늘</button>
+    </div>
+
+    <!-- 범례 -->
+    <div style="display:flex;gap:12px;margin-bottom:14px;font-size:11px;color:var(--t2);flex-wrap:wrap;">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--rd);margin-right:4px;"></span>D-7 이내</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--yl);margin-right:4px;"></span>D-30 이내</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--ac);margin-right:4px;"></span>일반 공고</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--pp);margin-right:4px;"></span>참여사업</span>
+    </div>
+
+    <!-- 달력 그리드 -->
+    <div id="cal-grid" style="background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;"></div>
+
+    <!-- 선택일 공고 목록 -->
+    <div id="cal-panel" style="margin-top:18px;display:none;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;" id="cal-panel-title"></div>
+      <div id="cal-panel-list"></div>
+    </div>
+  </div>
+
   <div class="view" id="view-archive">
     <div class="info-box" style="margin-bottom:16px;">
       🗂️ GitHub Actions가 매일 수집한 결과가 <code style="font-family:var(--mono);font-size:11px;">archive/</code> 폴더에 날짜별로 누적 저장됩니다.
@@ -503,6 +569,8 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
 // ── 공고 데이터 (메모리, fetch로 갱신) ──
 let GRANTS = [];          // 현재 로드된 공고 전체
 let GRANTS_META = {};     // generated_at, sources 등
+let SEEN_GRANTS = JSON.parse(localStorage.getItem('gr_seen_v3') || '{}'); // 이전에 본 공고 {사업명: true}
+let KEYWORDS = JSON.parse(localStorage.getItem('gr_kw_v3') || '[]'); // 관심 키워드 배열
 
 // ── 사용자 개인 데이터 (localStorage만) ──
 let PROJ = JSON.parse(localStorage.getItem('gr_proj_v3') || '[]');
@@ -574,11 +642,25 @@ async function fetchLatest(silent = false) {
     return;
   }
 
+  const today = new Date().toISOString().slice(0,10);
+  const lastSeen = localStorage.getItem('gr_seen_date_v3') || '';
+  const isNewDay = today !== lastSeen;
+
   GRANTS = (data.items || []).map(g => ({
     ...g,
     _bm: !!BOOKMARKS[g['사업명']],
+    _new: isNewDay ? !SEEN_GRANTS[g['사업명']] : false,
   }));
   GRANTS_META = { generated_at: data.generated_at, sources: data.sources, total: data.total };
+
+  // 새 공고 목록 저장
+  if (isNewDay) {
+    const newMap = {};
+    GRANTS.forEach(g => { newMap[g['사업명']] = true; });
+    localStorage.setItem('gr_seen_v3', JSON.stringify(newMap));
+    localStorage.setItem('gr_seen_date_v3', today);
+    SEEN_GRANTS = newMap;
+  }
 
   const genAt = data.generated_at ? new Date(data.generated_at).toLocaleString('ko-KR') : '-';
   setBanner('dash', 'ok', '✅', `${GRANTS.length}건 로드 완료`, `수집: ${genAt}`);
@@ -608,6 +690,7 @@ function goTab(name, el) {
   if (el)  el.classList.add('on');
   if (name === 'archive') loadArchiveIndex();
   if (name === 'sources') renderSources();
+  if (name === 'cal') renderCal();
 }
 
 // ══════════════════════════════════════════════════════
@@ -646,6 +729,25 @@ function renderDash() {
       }</div></div>`;
   }).join('');
 
+  // 새 공고
+  const newList = GRANTS.filter(g => g._new)
+    .sort((a,b) => new Date(a['마감일']) - new Date(b['마감일']))
+    .slice(0, 10);
+  const newSec = document.getElementById('new-section');
+  if (newList.length > 0) {
+    newSec.style.display = 'block';
+    document.getElementById('new-cnt').textContent = newList.length + '건';
+    document.getElementById('new-body').innerHTML = newList.map(g => `
+      <tr onclick="showDetail('${g['사업명'].replace(/'/g,"\\'")}')">
+        <td class="td-name"><span style="background:var(--ac-d);color:var(--ac);font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-right:5px;">NEW</span>${g['사업명']}</td>
+        <td style="color:var(--t2);font-size:11px;">${g['주관부처']||'-'}</td>
+        <td>${dlBadge(g['마감일'])}</td>
+        <td><span class="badge b-gr">${g['소스']||'-'}</span></td>
+      </tr>`).join('');
+  } else {
+    newSec.style.display = 'none';
+  }
+
   // 마감 임박
   const urgList = GRANTS
     .filter(g => { const n = daysLeft(g['마감일']); return n >= 0 && n <= 30; })
@@ -667,17 +769,42 @@ function renderDash() {
 // ── 공고 탐색 ──
 function renderRadar() {
   const q = (document.getElementById('radar-q')?.value||'').toLowerCase();
+  const hideExpired = document.getElementById('hide-expired')?.checked || false;
+  const sortBy = document.getElementById('radar-sort')?.value || 'deadline';
   let list = [...GRANTS];
 
+  // 칩 필터
   if (radarChip === 'bm')       list = list.filter(g => BOOKMARKS[g['사업명']]);
+  else if (radarChip === 'new') list = list.filter(g => g._new);
   else if (radarChip === 'urg') list = list.filter(g => { const n=daysLeft(g['마감일']); return n>=0&&n<=7; });
   else if (radarChip !== 'all') list = list.filter(g => (g['소스']||'').includes(radarChip));
 
+  // 마감 공고 숨기기
+  if (hideExpired) list = list.filter(g => !g['마감일'] || daysLeft(g['마감일']) >= 0);
+
+  // 검색
   if (q) list = list.filter(g =>
     (g['사업명']||'').toLowerCase().includes(q) ||
     (g['주관부처']||'').toLowerCase().includes(q) ||
     (g['소스']||'').toLowerCase().includes(q)
   );
+
+  // 정렬
+  if (sortBy === 'deadline') {
+    list.sort((a,b) => {
+      const an = daysLeft(a['마감일']), bn = daysLeft(b['마감일']);
+      if (an < 0 && bn >= 0) return 1;
+      if (bn < 0 && an >= 0) return -1;
+      return an - bn;
+    });
+  } else if (sortBy === 'newest') {
+    list.sort((a,b) => new Date(b['수집일시']||0) - new Date(a['수집일시']||0));
+  } else if (sortBy === 'source') {
+    list.sort((a,b) => (a['소스']||'').localeCompare(b['소스']||''));
+  }
+
+  // 키워드 하이라이트용
+  const kws = KEYWORDS.filter(k => k.trim());
 
   document.getElementById('radar-cnt').textContent = list.length + '건';
   if (GRANTS_META.generated_at) {
@@ -688,19 +815,31 @@ function renderRadar() {
   const empty = document.getElementById('radar-empty');
   const tbody = document.getElementById('radar-body');
   empty.style.display = list.length ? 'none' : 'block';
-  tbody.innerHTML = list.slice(0, 300).map(g => `
-    <tr onclick="showDetail('${g['사업명'].replace(/'/g,"\\'")}')">
+
+  // 키워드 카운트 표시
+  const kwCountEl = document.getElementById('kw-count');
+  if (kwCountEl && kws.length > 0) {
+    const matched = list.filter(g => kws.some(k => (g['사업명']||'').includes(k))).length;
+    kwCountEl.textContent = matched ? `키워드 매칭 ${matched}건` : '';
+  } else if (kwCountEl) kwCountEl.textContent = '';
+
+  tbody.innerHTML = list.slice(0, 300).map(g => {
+    const isKw = kws.length > 0 && kws.some(k => (g['사업명']||'').includes(k));
+    const isNew = g._new;
+    const rowStyle = isKw ? 'background:rgba(59,130,246,0.06);' : '';
+    return `
+    <tr onclick="showDetail('${g['사업명'].replace(/'/g,"\\'")}') " style="${rowStyle}">
       <td><button class="bm ${BOOKMARKS[g['사업명']]?'on':''}"
           onclick="event.stopPropagation();toggleBM('${g['사업명'].replace(/'/g,"\\'")}')">
         ${BOOKMARKS[g['사업명']]?'⭐':'☆'}</button></td>
-      <td class="td-name">${g['사업명']}</td>
+      <td class="td-name">${isNew?'<span style="background:var(--ac-d);color:var(--ac);font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;margin-right:4px;">NEW</span>':''}${isKw?'<span style="color:var(--ac);font-weight:600;">':''}${g['사업명']}${isKw?'</span>':''}</td>
       <td style="color:var(--t2);font-size:11px;">${g['주관부처']||'-'}</td>
       <td>${dlBadge(g['마감일'])}</td>
       <td><span class="badge b-gr">${g['소스']||'-'}</span></td>
       <td>${g['상세링크']&&g['상세링크']!=='https://www.moe.go.kr'
         ?`<a href="${g['상세링크']}" target="_blank" class="btn btn-g btn-s" onclick="event.stopPropagation()" style="text-decoration:none;">🔗</a>`
         :''}</td>
-    </tr>`).join('');
+    </tr>`;}).join('');
   if (list.length > 300) {
     tbody.innerHTML += `<tr><td colspan="6" style="text-align:center;padding:10px;color:var(--t3);font-size:11px;">
       상위 300건 표시 중 (전체 ${list.length}건) — 검색어로 좁혀보세요</td></tr>`;
@@ -710,8 +849,19 @@ function renderRadar() {
 function setRC(chip, el) {
   radarChip = chip;
   document.querySelectorAll('#view-radar .chip').forEach(c => c.classList.remove('on'));
-  el.classList.add('on');
+  if (el) el.classList.add('on');
   renderRadar();
+}
+
+function saveKeywords() {
+  const val = document.getElementById('kw-input')?.value || '';
+  KEYWORDS = val.split(/[,，\s]+/).map(k => k.trim()).filter(Boolean);
+  localStorage.setItem('gr_kw_v3', JSON.stringify(KEYWORDS));
+}
+
+function loadKeywords() {
+  const inp = document.getElementById('kw-input');
+  if (inp && KEYWORDS.length > 0) inp.value = KEYWORDS.join(', ');
 }
 
 // ── 북마크 (localStorage) ──
@@ -1035,10 +1185,145 @@ document.addEventListener('keydown', e => {
   if (e.key==='Escape') document.querySelectorAll('.overlay').forEach(m=>m.classList.remove('on'));
 });
 
+
+// ══════════════════════════════════════════════════════
+//  달력 뷰
+// ══════════════════════════════════════════════════════
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+
+function calToday() {
+  calYear = new Date().getFullYear();
+  calMonth = new Date().getMonth();
+  renderCal();
+}
+function calPrev() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+}
+function calNext() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCal();
+}
+
+function renderCal() {
+  setBanner('cal', GRANTS.length ? 'ok' : 'loading',
+    GRANTS.length ? '✅' : '⏳',
+    GRANTS.length ? `${GRANTS.length}건 로드됨` : '공고 데이터 로딩 중...',
+    '');
+
+  const title = `${calYear}년 ${calMonth+1}월`;
+  document.getElementById('cal-title').textContent = title;
+
+  const grid = document.getElementById('cal-grid');
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // 마감일 기준 공고 맵 {YYYY-MM-DD: [grant, ...]}
+  const grantMap = {};
+  GRANTS.forEach(g => {
+    const d = g['마감일'];
+    if (!d) return;
+    if (!grantMap[d]) grantMap[d] = [];
+    grantMap[d].push(g);
+  });
+
+  // 참여사업 맵
+  const projMap = {};
+  PROJ.forEach(p => {
+    if (!p.deadline) return;
+    if (!projMap[p.deadline]) projMap[p.deadline] = [];
+    projMap[p.deadline].push(p);
+  });
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const dayNames = ['일','월','화','수','목','금','토'];
+
+  let html = `<div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--bdr);">
+    ${dayNames.map((d,i) => `<div style="padding:8px 4px;text-align:center;font-size:11px;font-weight:600;color:${i===0?'var(--rd)':i===6?'var(--ac)':'var(--t2)'};">${d}</div>`).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);">`;
+
+  // 빈 칸
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div style="min-height:80px;border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);background:var(--bg);"></div>`;
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday = new Date(calYear, calMonth, day).getTime() === today.getTime();
+    const dow = new Date(calYear, calMonth, day).getDay();
+    const grants = grantMap[dateStr] || [];
+    const projs = projMap[dateStr] || [];
+    const n = daysLeft(dateStr);
+    const isUrgent = n >= 0 && n <= 7;
+    const isSoon = n > 7 && n <= 30;
+
+    html += `<div onclick="calSelectDay('${dateStr}')" style="min-height:80px;border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:4px;cursor:${grants.length||projs.length?'pointer':'default'};transition:background .15s;background:${isToday?'rgba(59,130,246,0.08)':'var(--bg-p)'}"
+      onmouseover="if(${grants.length+projs.length}>0)this.style.background='var(--bg-ch)'"
+      onmouseout="this.style.background='${isToday?'rgba(59,130,246,0.08)':'var(--bg-p)'}'">
+      <div style="font-size:12px;font-weight:${isToday?'700':'400'};color:${isToday?'var(--ac)':dow===0?'var(--rd)':dow===6?'var(--ac)':'var(--t1)'};margin-bottom:3px;">
+        ${isToday?`<span style="background:var(--ac);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">${day}</span>`:day}
+      </div>
+      ${grants.slice(0,3).map(g => {
+        const dn = daysLeft(g['마감일']);
+        const color = dn>=0&&dn<=7?'var(--rd)':dn>=0&&dn<=30?'var(--yl)':'var(--ac)';
+        return `<div style="font-size:9px;background:${color};background:${color === 'var(--rd)' ? 'rgba(239,68,68,0.15)' : color === 'var(--yl)' ? 'rgba(245,158,11,0.15)' : 'rgba(59,130,246,0.15)'};color:${color};border-radius:2px;padding:1px 3px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" title="${g['사업명']}">${g['사업명'].slice(0,12)}${g['사업명'].length>12?'…':''}</div>`;
+      }).join('')}
+      ${projs.slice(0,2).map(p => `<div style="font-size:9px;background:rgba(139,92,246,0.15);color:var(--pp);border-radius:2px;padding:1px 3px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" title="${p.name}">📁${p.name.slice(0,10)}${p.name.length>10?'…':''}</div>`).join('')}
+      ${grants.length > 3 ? `<div style="font-size:9px;color:var(--t3);">+${grants.length-3}건</div>` : ''}
+    </div>`;
+  }
+
+  // 마지막 주 나머지 칸
+  const lastDow = new Date(calYear, calMonth, daysInMonth).getDay();
+  for (let i = lastDow+1; i < 7; i++) {
+    html += `<div style="min-height:80px;border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);background:var(--bg);"></div>`;
+  }
+
+  html += '</div>';
+  grid.innerHTML = html;
+
+  // 이번달 공고 수 표시
+  let monthTotal = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    monthTotal += (grantMap[ds]||[]).length;
+  }
+}
+
+function calSelectDay(dateStr) {
+  const grants = GRANTS.filter(g => g['마감일'] === dateStr);
+  const projs = PROJ.filter(p => p.deadline === dateStr);
+  if (!grants.length && !projs.length) return;
+
+  const panel = document.getElementById('cal-panel');
+  const title = document.getElementById('cal-panel-title');
+  const list = document.getElementById('cal-panel-list');
+
+  panel.style.display = 'block';
+  title.textContent = `📅 ${dateStr} — 공고 ${grants.length}건 / 참여사업 ${projs.length}건`;
+
+  list.innerHTML = [
+    ...grants.map(g => `<div onclick="showDetail('${g['사업명'].replace(/'/g,"\\'")}') " style="padding:8px 12px;background:var(--bg-c);border:1px solid var(--bdr);border-radius:var(--rs);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+      <span class="badge b-gr">${g['소스']||'-'}</span>
+      <span style="font-size:13px;flex:1;">${g['사업명']}</span>
+      ${dlBadge(g['마감일'])}
+    </div>`),
+    ...projs.map(p => `<div style="padding:8px 12px;background:var(--pp-d);border:1px solid rgba(139,92,246,.2);border-radius:var(--rs);margin-bottom:6px;display:flex;align-items:center;gap:10px;">
+      <span class="badge" style="background:var(--pp-d);color:var(--pp);border:1px solid rgba(139,92,246,.3);">📁 참여사업</span>
+      <span style="font-size:13px;flex:1;">${p.name}</span>
+      <span class="badge" style="background:var(--bg-c);color:var(--t2);">${p.status}</span>
+    </div>`)
+  ].join('');
+}
 // ══════════════════════════════════════════════════════
 //  초기화
 // ══════════════════════════════════════════════════════
 (async () => {
+  loadKeywords();
   renderAll();
   renderSources();
   await fetchLatest(true);  // 자동 로드 (조용히)
