@@ -422,11 +422,22 @@ def handler_msit(source_cfg: dict) -> list[dict]:
             continue
 
         try:
-            data  = res.json()
-            body  = data.get("response", data).get("body", data)
-            items_raw = body.get("items", {})
+            data = res.json()
+            # 응답 구조 탐색 (방어적)
+            # 구조1: {response: {body: {items: {item: [...]}, totalCount: N}}}
+            # 구조2: {response: {body: {items: [...], totalCount: N}}}
+            if isinstance(data, dict):
+                body = data.get("response", data)
+                if isinstance(body, dict):
+                    body = body.get("body", body)
+            else:
+                body = {}
 
-            # items가 dict인 경우 item 키 추출
+            if isinstance(body, list):
+                body = body[0] if body else {}
+
+            items_raw = body.get("items", {}) if isinstance(body, dict) else {}
+
             if isinstance(items_raw, dict):
                 items = items_raw.get("item", [])
             elif isinstance(items_raw, list):
@@ -440,7 +451,7 @@ def handler_msit(source_cfg: dict) -> list[dict]:
                 logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
                 break
 
-            total = int(body.get("totalCount", 0))
+            total = int(body.get("totalCount", 0)) if isinstance(body, dict) else 0
             page_results = []
             for item in items:
                 if not isinstance(item, dict):
