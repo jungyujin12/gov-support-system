@@ -424,10 +424,16 @@ def handler_msit(source_cfg: dict) -> list[dict]:
         try:
             data = res.json()
 
-            # 디버그: 응답 최상위 키 확인
+            # 디버그: 응답 구조 상세 확인
             if page == 1:
                 if isinstance(data, dict):
                     logger.info(f"   [디버그] 응답 최상위 키: {list(data.keys())}")
+                    # response 키 내부 확인
+                    resp = data.get("response", {})
+                    logger.info(f"   [디버그] response 타입: {type(resp)}, 키: {list(resp.keys()) if isinstance(resp, dict) else '리스트'}")
+                    if isinstance(resp, dict):
+                        body = resp.get("body", resp)
+                        logger.info(f"   [디버그] body 타입: {type(body)}, 내용: {str(body)[:200]}")
                 elif isinstance(data, list):
                     logger.info(f"   [디버그] 응답이 리스트, 길이: {len(data)}")
                 else:
