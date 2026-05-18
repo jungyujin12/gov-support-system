@@ -84,7 +84,7 @@ class Config:
     BIZINFO_ROWS: int = 100
 
     # HTTP
-    TIMEOUT:     int   = 20
+    TIMEOUT:     int   = 30
     RETRY:       int   = 3
     RETRY_DELAY: int   = 2
     PAGE_DELAY:  float = 0.8
@@ -423,35 +423,65 @@ def handler_msit(source_cfg: dict) -> list[dict]:
 
         try:
             data = res.json()
-            # 응답 구조 탐색 (방어적)
-            # 구조1: {response: {body: {items: {item: [...]}, totalCount: N}}}
-            # 구조2: {response: {body: {items: [...], totalCount: N}}}
-            if isinstance(data, dict):
-                body = data.get("response", data)
+
+            # 디버그: 응답 최상위 키 확인
+            if page == 1:
+                if isinstance(data, dict):
+                    logger.info(f"   [디버그] 응답 최상위 키: {list(data.keys())}")
+                elif isinstance(data, list):
+                    logger.info(f"   [디버그] 응답이 리스트, 길이: {len(data)}")
+                else:
+                    logger.info(f"   [디버그] 응답 타입: {type(data)}")
+
+            # 과기부 API 응답 구조 완전 탐색
+            # 가능한 구조:
+            # A: {response: {header: {...}, body: {items: {item: [...]}, totalCount: N}}}
+            # B: {response: {header: {...}, body: {items: [...], totalCount: N}}}
+            # C: 리스트 직접 [{...}, {...}]
+            # D: {items: [...]}
+
+            items = []
+            total = 0
+
+            if isinstance(data, list):
+                # 구조 C: 리스트 직접
+                items = data
+
+            elif isinstance(data, dict):
+                # response 키 탐색
+                resp = data.get("response", data)
+                if isinstance(resp, list):
+                    resp = resp[0] if resp else {}
+
+                body = resp.get("body", resp) if isinstance(resp, dict) else resp
+                if isinstance(body, list):
+                    body = body[0] if body else {}
+
                 if isinstance(body, dict):
-                    body = body.get("body", body)
-            else:
-                body = {}
+                    total_raw = body.get("totalCount", body.get("total_count", body.get("numOfRows", 0)))
+                    try: total = int(total_raw)
+                    except: total = 0
 
-            if isinstance(body, list):
-                body = body[0] if body else {}
+                    items_raw = body.get("items", body.get("item", []))
 
-            items_raw = body.get("items", {}) if isinstance(body, dict) else {}
+                    if isinstance(items_raw, dict):
+                        items = items_raw.get("item", [])
+                        if isinstance(items, dict):
+                            items = [items]
+                    elif isinstance(items_raw, list):
+                        items = items_raw
+                    else:
+                        # body 자체가 아이템 리스트인 경우
+                        items = [body] if body.get("subject") or body.get("title") else []
 
-            if isinstance(items_raw, dict):
-                items = items_raw.get("item", [])
-            elif isinstance(items_raw, list):
-                items = items_raw
-            else:
-                items = []
+            if page == 1:
+                logger.info(f"   [디버그] items 타입: {type(items)}, 길이: {len(items) if isinstance(items, list) else 'N/A'}, total: {total}")
+                if items and isinstance(items, list) and len(items) > 0:
+                    logger.info(f"   [디버그] 첫번째 item 키: {list(items[0].keys()) if isinstance(items[0], dict) else items[0]}")
 
-            if isinstance(items, dict):
-                items = [items]
             if not items:
                 logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
                 break
-
-            total = int(body.get("totalCount", 0)) if isinstance(body, dict) else 0
             page_results = []
             for item in items:
                 if not isinstance(item, dict):
