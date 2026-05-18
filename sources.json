@@ -5,7 +5,7 @@
     "description": "중소벤처기업부 기업마당 API",
     "type": "api",
     "url": "https://www.bizinfo.go.kr",
-    "pages": 5,
+    "pages": 14,
     "note": "API 키 필요 (BIZINFO_API_KEY)"
   },
   {
