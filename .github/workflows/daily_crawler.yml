@@ -13,7 +13,8 @@ name: 정부지원사업 공고 자동 수집 v3
 
 on:
   schedule:
-    - cron: "0 0 * * 1-5"   # 평일 09:00 KST
+    - cron: "0 1 * * 1-5"   # 평일 UTC 01:00 = KST 10:00
+    - cron: "0 5 * * 1-5"   # 평일 UTC 05:00 = KST 14:00 (오후 추가 수집)
   workflow_dispatch:          # 수동 실행
 
 jobs:
@@ -21,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write         # 저장소 커밋 권한
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # Node.js 20 deprecated 경고 해결
 
     steps:
       - name: 📥 체크아웃
