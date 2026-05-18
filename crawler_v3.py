@@ -148,7 +148,8 @@ def safe_get(url: str, params: dict = None) -> Optional[requests.Response]:
             logger.error(f"❌ 요청 오류: {e}")
             return None
         if attempt < Config.RETRY:
-            time.sleep(Config.RETRY_DELAY)
+            wait = Config.RETRY_DELAY * (2 ** (attempt - 1))  # 2s, 4s, 8s
+            time.sleep(wait)
     return None
 
 
