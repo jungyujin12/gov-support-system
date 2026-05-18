@@ -259,6 +259,11 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
 
 @media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.kanban{grid-template-columns:repeat(3,1fr)}.src-grid{grid-template-columns:1fr}}
 @media(max-width:800px){.sidebar{width:54px}.sidebar .logo-name,.sidebar .logo-ver,.ni .lbl,.ni .cnt,.sync-row span{display:none}.logo-row{justify-content:center}.ni{justify-content:center;padding:10px}.main{margin-left:54px}.stats{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:repeat(2,1fr)}.archive-grid{grid-template-columns:1fr}.frow{grid-template-columns:1fr}}
+
+/* ── 달력 ── */
+#cal-grid { user-select: none; }
+#cal-panel { animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
 </style>
 </head>
 <body>
@@ -306,6 +311,7 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
     <div class="tab"     id="tab-radar"   onclick="goTab('radar',this)">📋 공고 탐색</div>
     <div class="tab"     id="tab-cal"     onclick="goTab('cal',this)">📅 달력</div>
     <div class="tab"     id="tab-proj"    onclick="goTab('proj',this)">📁 참여사업</div>
+    <div class="tab"     id="tab-history" onclick="goTab('history',this)">📜 사업 히스토리</div>
     <div class="tab"     id="tab-archive" onclick="goTab('archive',this)">🗂️ 누적 보관함</div>
     <div class="tab"     id="tab-sources" onclick="goTab('sources',this)">⚙️ 소스 관리</div>
   </div>
@@ -436,6 +442,21 @@ td{padding:10px 13px;font-size:12px;vertical-align:middle;}
   </div>
 
   <!-- ══ 누적 보관함 ══ -->
+  <!-- ───────── 히스토리 뷰 ───────── -->
+  <div class="view" id="view-history">
+    <div style="padding:40px;text-align:center;color:var(--t2);">
+      <div style="font-size:48px;margin-bottom:16px;">📜</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--t1);">사업 히스토리</div>
+      <div style="font-size:13px;color:var(--t3);line-height:1.8;">
+        연도별 신청 → 결과 타임라인을 관리하는 기능입니다.<br>
+        참여사업 탭에서 데이터를 충분히 쌓은 후 개발 예정입니다.
+      </div>
+      <div style="margin-top:24px;">
+        <button class="btn btn-g" onclick="goTab('proj', document.getElementById('tab-proj'))">📁 참여사업 관리로 이동</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ───────── 달력 뷰 ───────── -->
   <div class="view" id="view-cal">
     <div id="data-banner-cal" class="data-banner loading">
@@ -691,6 +712,7 @@ function goTab(name, el) {
   if (name === 'archive') loadArchiveIndex();
   if (name === 'sources') renderSources();
   if (name === 'cal') renderCal();
+  if (name === 'history') {} // 추후 구현
 }
 
 // ══════════════════════════════════════════════════════
@@ -1195,16 +1217,19 @@ let calMonth = new Date().getMonth(); // 0-indexed
 function calToday() {
   calYear = new Date().getFullYear();
   calMonth = new Date().getMonth();
+  document.getElementById('cal-panel').style.display = 'none';
   renderCal();
 }
 function calPrev() {
   calMonth--;
   if (calMonth < 0) { calMonth = 11; calYear--; }
+  document.getElementById('cal-panel').style.display = 'none';
   renderCal();
 }
 function calNext() {
   calMonth++;
   if (calMonth > 11) { calMonth = 0; calYear++; }
+  document.getElementById('cal-panel').style.display = 'none';
   renderCal();
 }
 
@@ -1288,9 +1313,17 @@ function renderCal() {
 
   // 이번달 공고 수 표시
   let monthTotal = 0;
+  let urgentTotal = 0;
   for (let d = 1; d <= daysInMonth; d++) {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    monthTotal += (grantMap[ds]||[]).length;
+    const dayGrants = grantMap[ds]||[];
+    monthTotal += dayGrants.length;
+    urgentTotal += dayGrants.filter(g => { const n=daysLeft(g['마감일']); return n>=0&&n<=7; }).length;
+  }
+  // 달력 타이틀에 요약 추가
+  const titleEl = document.getElementById('cal-title');
+  if (titleEl) {
+    titleEl.innerHTML = `${calYear}년 ${calMonth+1}월 <span style="font-size:12px;font-weight:400;color:var(--t2);margin-left:8px;">마감 ${monthTotal}건${urgentTotal>0?` <span style="color:var(--rd);">🔥 D-7 이내 ${urgentTotal}건</span>`:''}` + `</span>`;
   }
 }
 
