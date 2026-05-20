@@ -77,6 +77,7 @@ class Config:
     BIZINFO_API_KEY:   str = os.environ.get("BIZINFO_API_KEY", "")
     KSTARTUP_API_KEY:  str = os.environ.get("KSTARTUP_API_KEY", "")
     MSIT_API_KEY:      str = os.environ.get("MSIT_API_KEY", "")
+    DAEJEONTP_API_KEY: str = os.environ.get("DAEJEONTP_API_KEY", "")
     SLACK_WEBHOOK_URL: str = os.environ.get("SLACK_WEBHOOK_URL", "")
 
     # bizinfo.go.kr 자체 API (data.go.kr 경유 아님)
@@ -620,8 +621,132 @@ def handler_kstartup(source_cfg: dict) -> list[dict]:
     return results
 
 def handler_daejeon_tp(source_cfg: dict) -> list[dict]:
-    logger.info("ℹ️  대전TP 핸들러 미구현")
-    return []
+    """
+    대전테크노파크 지원사업 조회 API
+    Base URL: https://apis.data.go.kr/B552732/djtp
+    파라미터: serviceKey, pageNo, numOfRows, returnType=json
+    """
+    api_key = os.environ.get("DAEJEONTP_API_KEY", "")
+    if not api_key:
+        logger.warning("⚠️  DAEJEONTP_API_KEY 없음 → 대전TP 건너뜀")
+        return []
+
+    pages = source_cfg.get("pages", 5)
+    rows  = source_cfg.get("rows", 100)
+    BASE  = "https://apis.data.go.kr/B552732/djtp"
+
+    # 엔드포인트 후보 (실제 명세 확인 후 수정 필요)
+    endpoint = source_cfg.get("endpoint", "/getSupportBizList")
+    URL = BASE + endpoint
+
+    logger.info(f"🏙️  대전TP API ({pages}페이지 × {rows}건)")
+    results = []
+
+    for page in range(1, pages + 1):
+        params = {
+            "serviceKey":  api_key,
+            "pageNo":      page,
+            "numOfRows":   rows,
+            "returnType":  "json",
+        }
+        res = safe_get(URL, params=params)
+        if not res:
+            continue
+
+        try:
+            data = res.json()
+
+            # 디버그: 첫 페이지 응답 구조 확인
+            if page == 1:
+                if isinstance(data, dict):
+                    logger.info(f"   [디버그] 응답 최상위 키: {list(data.keys())}")
+                    # response 구조 탐색
+                    resp = data.get("response", data)
+                    body = resp.get("body", resp) if isinstance(resp, dict) else resp
+                    logger.info(f"   [디버그] body 내용: {str(body)[:300]}")
+                elif isinstance(data, list):
+                    logger.info(f"   [디버그] 리스트 응답, 길이: {len(data)}")
+                    if data:
+                        logger.info(f"   [디버그] 첫번째 항목 키: {list(data[0].keys()) if isinstance(data[0], dict) else data[0]}")
+
+            # 응답 파싱 (방어적)
+            items = []
+            total = 0
+
+            if isinstance(data, list):
+                items = data
+            elif isinstance(data, dict):
+                resp = data.get("response", data)
+                if isinstance(resp, list):
+                    resp = resp[0] if resp else {}
+                body = resp.get("body", resp) if isinstance(resp, dict) else {}
+                if isinstance(body, list):
+                    body = body[0] if body else {}
+                if isinstance(body, dict):
+                    total_raw = body.get("totalCount", body.get("total", 0))
+                    try: total = int(total_raw)
+                    except: total = 0
+                    items_raw = body.get("items", body.get("item", []))
+                    if isinstance(items_raw, dict):
+                        items = items_raw.get("item", [])
+                        if isinstance(items, dict):
+                            items = [items]
+                    elif isinstance(items_raw, list):
+                        items = items_raw
+
+            if isinstance(items, dict):
+                items = [items]
+
+            if not items:
+                logger.info(f"   └ {page}페이지: 데이터 없음 → 종료")
+                break
+
+            page_results = []
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+
+                # 필드명은 실제 API 응답 확인 후 수정 필요
+                # 일반적인 후보 필드명들
+                title = str(
+                    item.get("bizNm", item.get("pblancNm",
+                    item.get("title", item.get("suptBizNm", ""))
+                ))).strip()
+                if not title:
+                    continue
+
+                deadline = str(
+                    item.get("rcptEndDt", item.get("reqstEndDe",
+                    item.get("endDt", item.get("closeDt", ""))
+                ))).strip()
+
+                url = str(
+                    item.get("bizUrl", item.get("pblancUrl",
+                    item.get("detailUrl", "https://www.djtp.or.kr"))
+                )).strip()
+
+                page_results.append({
+                    "소스":     "대전TP",
+                    "사업명":   title,
+                    "주관부처": "대전테크노파크",
+                    "마감일":   normalize_date(deadline),
+                    "상세링크": url or "https://www.djtp.or.kr",
+                })
+
+            results.extend(page_results)
+            logger.info(f"   └ {page}페이지: {len(page_results)}건 (전체 {total}건)")
+
+            if not page_results or (total > 0 and page * rows >= total):
+                break
+
+        except Exception as e:
+            logger.error(f"   └ {page}페이지 파싱 오류: {e}")
+            logger.debug(f"   응답: {res.text[:300]}")
+
+        time.sleep(Config.PAGE_DELAY)
+
+    logger.info(f"   ✅ 대전TP 합계: {len(results)}건")
+    return results
 
 def handler_generic_crawl(source_cfg: dict) -> list[dict]:
     """
