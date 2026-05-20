@@ -46,6 +46,7 @@ jobs:
           BIZINFO_API_KEY:   ${{ secrets.BIZINFO_API_KEY }}
           KSTARTUP_API_KEY:  ${{ secrets.KSTARTUP_API_KEY }}
           MSIT_API_KEY:      ${{ secrets.MSIT_API_KEY }}
+          DAEJEONTP_API_KEY: ${{ secrets.DAEJEONTP_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           python crawler_v3.py
