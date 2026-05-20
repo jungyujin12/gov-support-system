@@ -67,12 +67,14 @@
   },
   {
     "source": "대전TP",
-    "enabled": false,
-    "description": "대전테크노파크",
-    "type": "crawl",
+    "enabled": true,
+    "description": "대전테크노파크 지원사업 공고",
+    "type": "api",
     "url": "https://www.dtp.or.kr",
-    "pages": 2,
-    "note": "구현 예정"
+    "pages": 5,
+    "note": "API 키 필요 (DAEJEONTP_API_KEY) — 엔드포인트 확인 필요",
+    "rows": 100,
+    "endpoint": "/getSupportBizList"
   },
   {
     "source": "충남경제진흥원",
