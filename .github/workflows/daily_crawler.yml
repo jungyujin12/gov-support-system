@@ -77,6 +77,7 @@ jobs:
           # 변경된 파일만 add
           git add data/latest.json
           git add data/latest.csv
+          git add data/cumulative.json 2>/dev/null || true
           git add data/archive_index.json 2>/dev/null || true
           git add archive/ 2>/dev/null || true
 
