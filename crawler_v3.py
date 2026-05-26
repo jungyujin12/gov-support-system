@@ -900,13 +900,14 @@ def save_all(df: pd.DataFrame) -> dict:
             existing_cum_items = []
             existing_keys = set()
 
-        # 신규 공고만 추출 (기존에 없는 것)
+        # 오늘 archive 병합 결과 기준으로 신규 추출 (마감 공고 포함)
+        today_all = json_body.get("items", records)  # archive 병합 결과 우선
         new_items = [
-            r for r in records
+            r for r in today_all
             if f"{r.get('사업명','')}|{r.get('소스','')}" not in existing_keys
         ]
 
-        # 누적 병합 (기존 + 신규)
+        # 누적 병합 (기존 영구보존 + 신규)
         merged_cum = existing_cum_items + new_items
         new_cnt = len(new_items)
 
