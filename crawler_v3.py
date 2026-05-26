@@ -209,6 +209,8 @@ def handler_bizinfo(source_cfg: dict) -> list[dict]:
             "pageUnit":  Config.BIZINFO_ROWS,
             "pageIndex": page,
             "dataType":  "json",
+            "sortNm":    "updtDt",   # 최신 수정일 기준 정렬
+            "sortOrder": "DESC",     # 내림차순 (최신순)
         }
         res = safe_get(Config.BIZINFO_URL, params=params)
         if not res:
@@ -556,6 +558,8 @@ def handler_kstartup(source_cfg: dict) -> list[dict]:
             "page":        page,
             "perPage":     rows,
             "returnType":  "json",
+            "order[0][column]": "pbanc_rcpt_end_dt",  # 마감일 기준
+            "order[0][dir]":    "desc",                # 최신순
         }
         res = safe_get(URL, params=params)
         if not res:
@@ -880,6 +884,46 @@ def save_all(df: pd.DataFrame) -> dict:
     paths["archive"] = str(archive_file)
     logger.info(f"📁 archive/{today}.json: {json_body['total']}건")
 
+    # ── /data/cumulative.json 누적 저장 ──
+    cumulative_file = DATA_DIR / "cumulative.json"
+    try:
+        if cumulative_file.exists():
+            with open(cumulative_file, encoding="utf-8") as f:
+                existing_cum = json.load(f)
+            existing_cum_items = existing_cum.get("items", [])
+            # 기존 누적 공고 키 세트 (사업명+소스 기준)
+            existing_keys = {
+                f"{i.get('사업명','')}|{i.get('소스','')}"
+                for i in existing_cum_items
+            }
+        else:
+            existing_cum_items = []
+            existing_keys = set()
+
+        # 신규 공고만 추출 (기존에 없는 것)
+        new_items = [
+            r for r in records
+            if f"{r.get('사업명','')}|{r.get('소스','')}" not in existing_keys
+        ]
+
+        # 누적 병합 (기존 + 신규)
+        merged_cum = existing_cum_items + new_items
+        new_cnt = len(new_items)
+
+        cum_body = {
+            "updated_at": datetime.now().isoformat(),
+            "total": len(merged_cum),
+            "new_today": new_cnt,
+            "items": merged_cum,
+        }
+        with open(cumulative_file, "w", encoding="utf-8") as f:
+            json.dump(cum_body, f, ensure_ascii=False, indent=2)
+        paths["cumulative"] = str(cumulative_file)
+        logger.info(f"📚 cumulative.json: 총 {len(merged_cum)}건 (오늘 신규 {new_cnt}건)")
+
+    except Exception as e:
+        logger.error(f"❌ cumulative 저장 오류: {e}")
+
     # ── archive 목록 메타 업데이트 ──
     _update_archive_index()
 
@@ -906,11 +950,24 @@ def _update_archive_index():
         except Exception:
             pass
 
+    # cumulative 통계 추가
+    cum_file = DATA_DIR / "cumulative.json"
+    cum_total = 0
+    if cum_file.exists():
+        try:
+            with open(cum_file, encoding="utf-8") as f:
+                cum_data = json.load(f)
+            cum_total = cum_data.get("total", 0)
+        except: pass
+
     index_path = DATA_DIR / "archive_index.json"
     with open(index_path, "w", encoding="utf-8") as f:
-        json.dump({"updated_at": datetime.now().isoformat(), "archives": index}, f,
-                  ensure_ascii=False, indent=2)
-    logger.info(f"📋 archive_index.json: {len(index)}개 날짜")
+        json.dump({
+            "updated_at": datetime.now().isoformat(),
+            "archives": index,
+            "cumulative_total": cum_total,
+        }, f, ensure_ascii=False, indent=2)
+    logger.info(f"📋 archive_index.json: {len(index)}개 날짜 (누적 {cum_total}건)")
 
 
 # ──────────────────────────────────────────────
