@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-06-10T08:43:38.378308",
-  "total": 3397,
-  "new_today": 120,
+  "updated_at": "2026-06-11T06:25:48.752454",
+  "total": 3425,
+  "new_today": 28,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -27178,6 +27178,230 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000123023",
       "수집일시": "2026-06-10 08:43"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 민간주도형 기술창업 활성화 지원사업 전북 농식품 테크 (예비)창업기업 모집(재)",
+      "주관부처": "(주)리벤처스",
+      "마감일": "2026-06-16",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178072",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 용인 오픈이노베이션 교류회 1회차",
+      "주관부처": "알파브라더스",
+      "마감일": "2026-06-16",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178021",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "제8회 스타트업 오픈이노베이션 밋업데이(Meet-up Day) 참여 스타트업 모집 공고",
+      "주관부처": "(재)대구창조경제혁신센터 대표이사",
+      "마감일": "2026-06-17",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178067",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "중장년 아이디어(기술) 창업, 정부지원사업으로 시작하고 생성형 AI로 준비하기",
+      "주관부처": "성북구 중장년 기술창업센터",
+      "마감일": "2026-06-17",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178035",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 한-아프리카 스타트업 경진대회 참가자(팀) 모집 (~6.18.(목))",
+      "주관부처": "한·아프리카재단",
+      "마감일": "2026-06-18",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178068",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "{이화여자대학교} 2026 식품외식·푸드테크  기술사업화 교육 교육생 모집",
+      "주관부처": "이화여자대학교 산학협력단",
+      "마감일": "2026-06-18",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178056",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「2026년 대덕특구 이노폴리스캠퍼스 지원사업」 엑셀러레이팅 프로그램 참여기업 모집",
+      "주관부처": "다래전략사업화센터",
+      "마감일": "2026-06-18",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=177997",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 글로벌 소셜 플라잉스타 참여기업 모집 공고",
+      "주관부처": "대전창조경제혁신센터",
+      "마감일": "2026-06-19",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178059",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "청년 취·창업 아카데미 「청취캠퍼스」참가자 모집",
+      "주관부처": "야탑유스센터",
+      "마감일": "2026-06-19",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178082",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[홍익대학교 아트앤디자인테크 창업보육센터] 2026년 1차 신규 입주기업 모집(~6/21(일)23:59까지)",
+      "주관부처": "홍익대학교",
+      "마감일": "2026-06-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178064",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[강원창조경제혁신센터]2026 강원 BRIDGE 오픈이노베이션 프로그램 「바이오·헬스케어 분야」참여기업 추가모집",
+      "주관부처": "(재)강원창조경제혁신센터",
+      "마감일": "2026-06-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178070",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[강동구 청년해냄센터] 브랜딩 스킬업 스쿨 참가자 모집",
+      "주관부처": "강동구 청년해냄센터",
+      "마감일": "2026-06-22",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178066",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 하반기 신촌 청년푸드스토어 청년창업가 모집",
+      "주관부처": "서울특별시 서대문구청장",
+      "마감일": "2026-06-22",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178057",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 ITCEN × DRAPER OPEN INNOVATION",
+      "주관부처": "드레이퍼스타트업하우스 코리아센터",
+      "마감일": "2026-06-24",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178055",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[창업] 창업 트렌드와 유망 창업 아이템",
+      "주관부처": "마포청년창업취업지원센터 나루",
+      "마감일": "2026-06-25",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178076",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 관악S밸리 성장 지원 세미나 2회",
+      "주관부처": "(재)관악중소벤처진흥원",
+      "마감일": "2026-06-25",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178060",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 지역이음 관광기업 참여기업 모집(재공고)",
+      "주관부처": "사단법인 한국지역개발연구원",
+      "마감일": "2026-06-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178074",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 WoW!메이커스 투자유치 아카데미",
+      "주관부처": "수원대학교 WoW!메이커스",
+      "마감일": "2026-06-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178071",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 제2회 S.Challenge IR 바이오 분야 참여 기업 모집 공고",
+      "주관부처": "서울지방중소벤처기업청, 서울창조경제혁신센터",
+      "마감일": "2026-06-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178065",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 남동댕동 창업 실무 교육 - 로컬크리에이터 교육",
+      "주관부처": "남동구 청년창업지원센터",
+      "마감일": "2026-06-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178062",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「2026 업사이클·친환경 창업경진대회」 참가자 모집 공고",
+      "주관부처": "광명업사이클아트센터",
+      "마감일": "2026-06-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178061",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[대구시, 대구디지털지역혁신진흥원] 2026년 대구광역시 공공데이터·AI 활용 창업경진대회(~6/28)",
+      "주관부처": "2026년 대구광역시 공공데이터·AI 활용 창업경진대회 운영 사무국",
+      "마감일": "2026-06-28",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178026",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[스파크랩] 에이전틱 AI 시대, 1인·소규모 팀 창업가를 위한 프로그램 SparkClaw 1기 모집",
+      "주관부처": "(주)스파크랩",
+      "마감일": "2026-06-28",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178054",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "킥스타터, 인디고고, 마쿠아케, 와디즈 등 크라우드펀딩 제품 홍보 영상 무료 촬영 지원기업 모집",
+      "주관부처": "(주)펀딩인사이더",
+      "마감일": "2026-06-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178049",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "&apos;AI시대, 일을 다시 설계하는 법&apos; 비대면 교육 참가자 모집",
+      "주관부처": "서울핀테크랩",
+      "마감일": "2026-07-05",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178080",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[ZUZU X 미라클랩 집중검토] Pre-Seed ~ Pre-A 스타트업 투자 검토 모집",
+      "주관부처": "(주) 코드박스 Kodebox",
+      "마감일": "2026-07-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178077",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[ZUZU X 로레알 집중검토] 뷰티·바이오 오픈이노베이션 모집",
+      "주관부처": "(주) 코드박스 Kodebox",
+      "마감일": "2026-07-15",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178078",
+      "수집일시": "2026-06-11 06:25"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 7월 동네창업학교 교육생 모집 공고",
+      "주관부처": "충남신용보증재단",
+      "마감일": "2026-07-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178081",
+      "수집일시": "2026-06-11 06:25"
     }
   ]
 }
