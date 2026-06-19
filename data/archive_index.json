@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-06-19T06:23:44.595584",
+  "updated_at": "2026-06-19T09:25:57.938821",
   "archives": [
     {
       "date": "2026-06-19",
-      "total": 2479,
+      "total": 2505,
       "sources": {
         "기업마당": 1400,
         "K-Startup": 1000,
@@ -261,5 +261,5 @@
       "file": "archive/2026-05-15.json"
     }
   ],
-  "cumulative_total": 3855
+  "cumulative_total": 3880
 }
