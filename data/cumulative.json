@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-07-03T08:29:36.236047",
-  "total": 4612,
-  "new_today": 0,
+  "updated_at": "2026-07-06T05:49:44.443711",
+  "total": 4624,
+  "new_today": 12,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -36898,6 +36898,102 @@
       "마감일": "2026-12-31",
       "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=177922",
       "수집일시": "2026-07-03 05:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 민간 산림복지 창업·성장 패키지 “FOR:GROW [초기창업패키지]",
+      "주관부처": "한국산림복지진흥원",
+      "마감일": "2026-07-06",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178411",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 7월 크립톤 IR피칭 & 오피스아워 신청 접수",
+      "주관부처": "(주)크립톤 부산센터",
+      "마감일": "2026-07-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178395",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026「글로벌 스케일업-유럽 트랙」참가기업 모집(연장)",
+      "주관부처": "경상국립대학교 창업중심대학사업단",
+      "마감일": "2026-07-09",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178324",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "사회서비스 기업 맞춤형 역량강화(소셜 링크 아카데미 4기)",
+      "주관부처": "(주)엠와이소셜컴퍼니",
+      "마감일": "2026-07-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178333",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 민간 산림복지 창업·성장 패키지 “FOR:SEED [예비창업패키지] 참가자 모집",
+      "주관부처": "한국산림복지진흥원",
+      "마감일": "2026-07-11",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178412",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 민간 산림복지 창업·성장 패키지 FOR:RESTART(재기지원패키지)",
+      "주관부처": "한국산림복지진흥원",
+      "마감일": "2026-07-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178414",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026-8회 호남권 엔젤투자 피칭룸 in 전북 참가기업 모집 안내",
+      "주관부처": "한국엔젤투자협회 호남권 엔젤투자허브",
+      "마감일": "2026-07-19",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178407",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 SVC Seoul 산학협력 파트너 대학 모집 공고",
+      "주관부처": "창업진흥원",
+      "마감일": "2026-07-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178401",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「민관협력 오픈이노베이션 지원」'성과기업 후속 지원' 주관기관 모집공고",
+      "주관부처": "중소벤처기업부",
+      "마감일": "2026-07-22",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178398",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 지역 첨단제조 스타트업 스케일업 지원사업 창업기업 모집공고",
+      "주관부처": "창업진흥원",
+      "마감일": "2026-07-24",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178380",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "알리바바닷컴 주최 세계 최대 규모 제품기반 창업대회 「CoCreate Pitch Seoul 2026」 참가팀 모집공고",
+      "주관부처": "알리바바닷컴",
+      "마감일": "2026-07-25",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178382",
+      "수집일시": "2026-07-06 05:49"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "화성시 소셜벤처 창업 아이디어 경진대회』 참여(예비)기업 모집 공고",
+      "주관부처": "화성특례시",
+      "마감일": "2026-07-31",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178390",
+      "수집일시": "2026-07-06 05:49"
     }
   ]
 }
