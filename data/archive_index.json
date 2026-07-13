@@ -1,6 +1,14 @@
 {
-  "updated_at": "2026-07-10T08:16:32.309839",
+  "updated_at": "2026-07-13T05:07:11.018344",
   "archives": [
+    {
+      "date": "2026-07-13",
+      "total": 1000,
+      "sources": {
+        "K-Startup": 1000
+      },
+      "file": "archive/2026-07-13.json"
+    },
     {
       "date": "2026-07-10",
       "total": 2478,
@@ -393,5 +401,5 @@
       "file": "archive/2026-05-15.json"
     }
   ],
-  "cumulative_total": 5110
+  "cumulative_total": 5133
 }
