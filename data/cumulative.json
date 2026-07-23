@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-07-22T07:28:35.141631",
-  "total": 5596,
-  "new_today": 148,
+  "updated_at": "2026-07-23T04:18:07.579761",
+  "total": 5604,
+  "new_today": 8,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -44770,6 +44770,70 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000124502",
       "수집일시": "2026-07-22 07:28"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[무료 웨비나] 글로벌 시장을 위한 AI 마이크로 서비스 제작 실전",
+      "주관부처": "The Bridge Circle (TBC)",
+      "마감일": "2026-07-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178625",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "기업마당",
+      "사업명": "2026년 투자유치설명회 및 컨설팅 지원사업 공고",
+      "주관부처": "지식재산처",
+      "마감일": "2026-07-30",
+      "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000124497",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "일본 후쿠오카 진출 지원 Plug in: Fukuoka #13 참가 스타트업 모집 공고(~ 7/31 18:00)",
+      "주관부처": "(재)부산창조경제혁신센터 대표이사",
+      "마감일": "2026-07-31",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178640",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026-9회 호남권 엔젤투자 피칭룸 in 전남광주 참가기업 모집 안내",
+      "주관부처": "한국엔젤투자협회 호남권 엔젤투자허브",
+      "마감일": "2026-08-03",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178650",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "26년 국토교통 창업지원센터 입주기업 추가 모집공고",
+      "주관부처": "국토교통과학기술진흥원",
+      "마감일": "2026-08-04",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178639",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "KAIST 딥테크 유망랩 라운드테이블",
+      "주관부처": "(주)아이비유",
+      "마감일": "2026-08-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178645",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 WEROUND 공유형 공간 신규 입주기업 상시 모집",
+      "주관부처": "서강대학교 판교캠퍼스사업단",
+      "마감일": "2026-08-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178636",
+      "수집일시": "2026-07-23 04:18"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[무료] AI 콘텐츠 마케터/1인 마케팅 에이전시 창업가 육성과정",
+      "주관부처": "(주)메타코드에이치",
+      "마감일": "2026-08-19",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178627",
+      "수집일시": "2026-07-23 04:18"
     }
   ]
 }
