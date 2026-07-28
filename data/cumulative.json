@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-07-27T08:21:04.377859",
-  "total": 5767,
-  "new_today": 41,
+  "updated_at": "2026-07-28T04:47:30.736469",
+  "total": 5770,
+  "new_today": 3,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -46138,6 +46138,30 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000124762",
       "수집일시": "2026-07-27 08:21"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 GH 베이스캠프 참여기업 모집공고",
+      "주관부처": "경기주택도시공사",
+      "마감일": "2026-08-03",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178644",
+      "수집일시": "2026-07-28 04:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "수원도시재단 「2026 창업오디션」 모집 수정 공고",
+      "주관부처": "수원도시재단",
+      "마감일": "2026-08-03",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178275",
+      "수집일시": "2026-07-28 04:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 재창업 활성화 유공포상 공고(재창업기업, 재창업 지원 부문)",
+      "주관부처": "중소벤처기업부 장관",
+      "마감일": "2026-08-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178506",
+      "수집일시": "2026-07-28 04:47"
     }
   ]
 }
