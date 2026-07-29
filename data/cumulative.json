@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-07-28T07:31:03.542414",
-  "total": 5828,
-  "new_today": 58,
+  "updated_at": "2026-07-29T04:14:49.183023",
+  "total": 5840,
+  "new_today": 12,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -46626,6 +46626,102 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000124823",
       "수집일시": "2026-07-28 07:31"
+    },
+    {
+      "소스": "교육부_사업공고",
+      "사업명": "2026년 상반기 교육기부 진로체험 인증기관 선정 결과 공고",
+      "주관부처": "교육부",
+      "마감일": "2026-07-29",
+      "상세링크": "https://www.moe.go.kr/boardCnts/view.do?boardID=72761&boardSeq=72761",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년도 교통 분야 원스톱 수출환경 구축사업 참여기업 모집 공고",
+      "주관부처": "한국도로교통공단 이사장,  강원창조경제혁신센터 대표이사",
+      "마감일": "2026-07-31",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178668",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「제3회 DDM Union 청년 창업 아이디어 챌린지」참가자 모집 공고",
+      "주관부처": "광운대학교 산학협력단",
+      "마감일": "2026-08-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178664",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "고려대기술지주(주) 판교인큐베이팅센터 입주기업 모집공고(기간연장)",
+      "주관부처": "고려대학교기술지주 주식회사",
+      "마감일": "2026-08-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178700",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 대구콘텐츠코리아랩 캐릭터 글로벌 진입 프로젝트 참가자 모집 공고",
+      "주관부처": "(재)대구디지털혁신진흥원",
+      "마감일": "2026-08-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178674",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "기업마당",
+      "사업명": "2026년 스웨덴 게임 컨퍼런스(Sweden Game Conference) 참가기업 모집 연장 공고",
+      "주관부처": "문화체육관광부",
+      "마감일": "2026-08-10",
+      "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000124258",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 여성CEO 비즈니스 아카데미 경상권역 시즌 1",
+      "주관부처": "한국여성경제인협회",
+      "마감일": "2026-08-12",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178671",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[2026년 G-Space 창업기업 홍보 콘텐츠 제작 지원사업] 창업기업  모집연장공고",
+      "주관부처": "(재)경남창조경제혁신센터 대표이사",
+      "마감일": "2026-08-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178667",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "(재)여성기업종합지원센터 인천센터 2026년 제1차 입주기업 모집 공고",
+      "주관부처": "(재)여성기업종합지원센터 인천센터",
+      "마감일": "2026-08-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178665",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[숭실대학교 캠퍼스타운] 2026 숭실 스타트업 아카데미 8월 참여자 모집",
+      "주관부처": "숭실대학교 캠퍼스타운사업단",
+      "마감일": "2026-08-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178666",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "FIX 이노베이션 어워즈 프로그램 참여기업 모집 공고",
+      "주관부처": "(주)엑스코 FIX 사무국",
+      "마감일": "2026-08-22",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178651",
+      "수집일시": "2026-07-29 04:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[무료 AI 역량강화 교육] 생성형 AI기반, 글로벌 마케팅 자동화 및 현지화 에이전트 구축과",
+      "주관부처": "(주)글로벌창업연구소",
+      "마감일": "2026-08-31",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178672",
+      "수집일시": "2026-07-29 04:14"
     }
   ]
 }
