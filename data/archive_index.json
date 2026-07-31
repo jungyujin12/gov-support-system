@@ -1,6 +1,16 @@
 {
-  "updated_at": "2026-07-30T07:48:25.101952",
+  "updated_at": "2026-07-31T04:46:39.487299",
   "archives": [
+    {
+      "date": "2026-07-31",
+      "total": 1079,
+      "sources": {
+        "K-Startup": 1000,
+        "교육부_사업공고": 49,
+        "교육부_공지사항": 30
+      },
+      "file": "archive/2026-07-31.json"
+    },
     {
       "date": "2026-07-30",
       "total": 2479,
@@ -531,5 +541,5 @@
       "file": "archive/2026-05-15.json"
     }
   ],
-  "cumulative_total": 5916
+  "cumulative_total": 5944
 }
