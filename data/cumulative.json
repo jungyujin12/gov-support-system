@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-08-31T11:13:04.269665",
-  "total": 7342,
-  "new_today": 66,
+  "updated_at": "2026-09-01T06:05:58.381550",
+  "total": 7356,
+  "new_today": 14,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -58738,6 +58738,118 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000125948",
       "수집일시": "2026-08-31 11:13"
+    },
+    {
+      "소스": "교육부_사업공고",
+      "사업명": "2026년도 공공기관 고객만족도 조사 주관사업자 선정 재공고(정정)",
+      "주관부처": "교육부",
+      "마감일": "2026-09-01",
+      "상세링크": "https://www.moe.go.kr/boardCnts/view.do?boardID=72761&boardSeq=72761",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 인천 관광스타트업 IR 데이 참가기업 모집",
+      "주관부처": "인천관광공사",
+      "마감일": "2026-09-08",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178979",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "스타트업 자금조달 WEEK  (투자) 프로그램 참가기업 모집",
+      "주관부처": "서강대학교 판교캠퍼스사업단",
+      "마감일": "2026-09-09",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179074",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "관악 마케팅 지원 참여자 모집",
+      "주관부처": "관악구청",
+      "마감일": "2026-09-09",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179076",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "홍콩 코스모프로프 미용 전시회(Cosmoprof Asia 2026) 서울 공동관 참여기업 모집",
+      "주관부처": "서울경제진흥원",
+      "마감일": "2026-09-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179071",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 SaaS 전환지원센터xAWS SaaS 현대화 교육 3회차 참가자 모집 공고",
+      "주관부처": "정보통신산업진흥원, SaaS 전환지원센터",
+      "마감일": "2026-09-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179082",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 위치정보 보호조치 교육 (5차)",
+      "주관부처": "(주)아이전스",
+      "마감일": "2026-09-16",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179001",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[부산울산경남센터] 사회적협동조합 설립인가 및 경영공시 교육 안내 (9.16.(수), 9.17.(목) - 온라인병행)",
+      "주관부처": "한국사회적기업진흥원 부산울산경남센터",
+      "마감일": "2026-09-17",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179083",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 제3차 대전 팁스타운 입주기업 모집 공고",
+      "주관부처": "창업진흥원장",
+      "마감일": "2026-09-28",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=178981",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "출연연, 대학 연구소기업 Business Development 프로그램 참여 예비창업자 모집 (9월)",
+      "주관부처": "연구개발특구진흥재단",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179085",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 안양산업진흥원 제3차 입주기업 모집 공고",
+      "주관부처": "안양산업진흥원",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179081",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 2차 CNU Startup to TIPS 기업 모집",
+      "주관부처": "충남대학교기술지주(주)",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179080",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[성동구 관내기업] 「모두의 창업⸥ 정부R&D사업 및 베트남 해외진출 컨설팅 지원기업 모집",
+      "주관부처": "성동구청",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179078",
+      "수집일시": "2026-09-01 06:05"
+    },
+    {
+      "소스": "기업마당",
+      "사업명": "2026년 무료 직무발명제도 컨설팅 신청 공고",
+      "주관부처": "지식재산처",
+      "마감일": "2026-11-30",
+      "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000117297",
+      "수집일시": "2026-09-01 06:05"
     }
   ]
 }
