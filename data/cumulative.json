@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-03T09:17:35.255782",
-  "total": 7534,
-  "new_today": 45,
+  "updated_at": "2026-09-04T05:37:20.643157",
+  "total": 7537,
+  "new_today": 3,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -60274,6 +60274,30 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000126138",
       "수집일시": "2026-09-03 09:17"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 서울창업센터 관악 관악S밸리 창업 페스티벌  &apos;창업 아이디어 경진대회&apos; 참가자 모집",
+      "주관부처": "서울창업센터 관",
+      "마감일": "2026-09-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179130",
+      "수집일시": "2026-09-04 05:37"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 웰컴 투 팁스 3차 참가기업 모집 (동남권)",
+      "주관부처": "(주)로우파트너스",
+      "마감일": "2026-09-17",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179126",
+      "수집일시": "2026-09-04 05:37"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 스마트상점 기술보급사업 참여 소상공인 모집공고(2차)",
+      "주관부처": "소상공인시장진흥공단",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179106",
+      "수집일시": "2026-09-04 05:37"
     }
   ]
 }
