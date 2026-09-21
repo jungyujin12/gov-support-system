@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-18T09:16:50.873266",
-  "total": 8173,
-  "new_today": 78,
+  "updated_at": "2026-09-21T06:20:39.899225",
+  "total": 8174,
+  "new_today": 1,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -65386,6 +65386,14 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000126635",
       "수집일시": "2026-09-18 09:16"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「충북 제조창업 마스터 매칭 프로그램」 참여기업 모집 공고",
+      "주관부처": "충북창조경제혁신센터, 충북Pro메이커센터, 충부테크노파크",
+      "마감일": "2026-10-02",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179288",
+      "수집일시": "2026-09-21 06:20"
     }
   ]
 }
