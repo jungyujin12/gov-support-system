@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-21T10:16:45.987702",
-  "total": 8217,
-  "new_today": 43,
+  "updated_at": "2026-09-22T05:57:37.869127",
+  "total": 8234,
+  "new_today": 17,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -65738,6 +65738,142 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000126686",
       "수집일시": "2026-09-21 10:16"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 전북청년창업박람회 창업기업 모집 공고",
+      "주관부처": "(주)콜즈다이나믹스",
+      "마감일": "2026-09-22",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179290",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「아시아 창업 엑스포 FLY ASIA 2026」참여 스타트업 모집(1:1 밋업, 전시) / 밋업 스타트업 모집 기간 연장(~9.30.)",
+      "주관부처": "(재)부산기술창업투자원",
+      "마감일": "2026-09-23",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179164",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "청년창업 거주지원시설(창업하여家) 입주자 3차 모집(연장)",
+      "주관부처": "(재)광주테크노파크",
+      "마감일": "2026-09-29",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179292",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[창업BuS x Station C] 2026년  강원BRIDGE 배치프로그램 2차 창업기업 모집",
+      "주관부처": "재단법인 강원창조경제혁신센터",
+      "마감일": "2026-09-29",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179305",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 제2회 테크플러스 스테이지 입주기업 모집 공고",
+      "주관부처": "(재)광주테크노파크",
+      "마감일": "2026-09-29",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179291",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 제4회 SB 스타트업 네트워킹 페스티벌: AI 기반 지역문제 해결 해커톤 참가자 모집 (~9/30)",
+      "주관부처": "성북클러스터",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179299",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 K-BIO 글로벌 이노베이션 링스(LinX)",
+      "주관부처": "KOTRA",
+      "마감일": "2026-09-30",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179312",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[창업] 창업가를 위한 가격 전략 실전",
+      "주관부처": "마포청년창업취업지원센터 나루",
+      "마감일": "2026-10-02",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179310",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 10월 크립톤 IR피칭 & 오피스아워 신청 접수",
+      "주관부처": "크립톤 부산센터",
+      "마감일": "2026-10-05",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179304",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "구로구 청년창업지원센터 일반 창업교육(하반기: 4회차): 온라인 마케팅 실전 가이드",
+      "주관부처": "구로구 청년창업지원센터",
+      "마감일": "2026-10-07",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179300",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 제10회 G밸리창업경진대회 참가기업 모집",
+      "주관부처": "한국산업단지공단",
+      "마감일": "2026-10-08",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179309",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "'애자일 피보팅: 시장의 변화를 기회로 만드는 기술창업 전략'",
+      "주관부처": "주식회사 이노시아",
+      "마감일": "2026-10-11",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179295",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[GBSA] 2026 판교스타트업 투자교류회 제 3차 투자교류회",
+      "주관부처": "㈜내비온파트너스",
+      "마감일": "2026-10-12",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179283",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "용인시산업진흥원 2026년 제4차 창업지원센터 입주기업 모집",
+      "주관부처": "용인시산업진흥원",
+      "마감일": "2026-10-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179284",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[무료 세미나] ChatGPT·Gemini 시대, 우리 브랜드 AI 검색 노출 전략",
+      "주관부처": "토스페이먼츠",
+      "마감일": "2026-10-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179306",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "블루포인트파트너스 스타팅포인트 Bay7 참여팀 모집",
+      "주관부처": "㈜블루포인트파트너스",
+      "마감일": "2026-12-15",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179302",
+      "수집일시": "2026-09-22 05:57"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[무료제공] ICT 규제샌드박스 AI 기반 규제확인 서비스",
+      "주관부처": "정보통신산업진흥원",
+      "마감일": "2026-12-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179267",
+      "수집일시": "2026-09-22 05:57"
     }
   ]
 }
