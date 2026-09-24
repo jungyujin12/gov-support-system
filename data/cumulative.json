@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-23T09:37:52.391057",
-  "total": 8313,
-  "new_today": 38,
+  "updated_at": "2026-09-24T05:56:06.693467",
+  "total": 8314,
+  "new_today": 1,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -66506,6 +66506,14 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000126763",
       "수집일시": "2026-09-23 09:37"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[경희창업보육센터(서울)] 2026년 하반기 신규 입주기업 모집",
+      "주관부처": "경희창업보육센터",
+      "마감일": "2026-10-06",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179345",
+      "수집일시": "2026-09-24 05:56"
     }
   ]
 }
