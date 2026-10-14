@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-13T12:16:49.184661",
-  "total": 8852,
-  "new_today": 0,
+  "updated_at": "2026-10-14T05:54:52.615822",
+  "total": 8858,
+  "new_today": 6,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -70818,6 +70818,54 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000127151",
       "수집일시": "2026-10-13 07:27"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "「2026 슈퍼:콘 엑셀러레이팅」 지원사업 참여기업 모집공고",
+      "주관부처": "대전정보문화산업진흥원",
+      "마감일": "2026-10-14",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179485",
+      "수집일시": "2026-10-14 05:54"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[제주창조경제혁신센터]「상시매칭 오픈이노베이션 플랫폼」&apos;에코프로 계열사&apos;&apos;수요과제 매칭 스타트업 모집 (~10/16)",
+      "주관부처": "제주창조경제혁신센터",
+      "마감일": "2026-10-16",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179487",
+      "수집일시": "2026-10-14 05:54"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 프로젝트 창업 인큐베이팅 : 2027 모두의 창업 선정 프로젝트",
+      "주관부처": "2026년 프로젝트 창업 인큐베이팅 운영사무국",
+      "마감일": "2026-10-20",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179446",
+      "수집일시": "2026-10-14 05:54"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 광명 글로컬 데모데이 참관객 모집",
+      "주관부처": "씨엔티테크",
+      "마감일": "2026-10-26",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179456",
+      "수집일시": "2026-10-14 05:54"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "Applications Now Open: 2026 OASIS-6 Global Startup Challenge 「2026 외국인 창업대전(OASIS-6)」 참가자 모집",
+      "주관부처": "글로벌창업이민센터(한국능률협회컨설팅)",
+      "마감일": "2026-10-27",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179459",
+      "수집일시": "2026-10-14 05:54"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 남구다운 청년 창업 지원사업 통합공고(수정)",
+      "주관부처": "(사)대구경북고용복지연구원",
+      "마감일": "2026-11-12",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179486",
+      "수집일시": "2026-10-14 05:54"
     }
   ]
 }
