@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-16T09:23:55.088962",
-  "total": 9001,
-  "new_today": 34,
+  "updated_at": "2026-10-19T05:50:37.979455",
+  "total": 9016,
+  "new_today": 15,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -72010,6 +72010,126 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000127264",
       "수집일시": "2026-10-16 09:23"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "IR 피칭 청년 창업 오디션 「2026 D-MADE 오디션」 참여기업 모집 (~10. 20. 연장)",
+      "주관부처": "동명청년창작소",
+      "마감일": "2026-10-20",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179394",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 충남창업마루나비 하반기 입주기업 모집 공고",
+      "주관부처": "충남창조경제혁신센터",
+      "마감일": "2026-10-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179524",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "한국기술교육대학교 오픈이노베이션 프로그램 참여기업 모집 안내(엠아이텍 재공고)",
+      "주관부처": "한국기술교육대학교 앵커사업단",
+      "마감일": "2026-10-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179374",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[광운대x동국대x시립대 캠퍼스타운] AI+X Connect Forum",
+      "주관부처": "광운대학교 캠퍼스타운",
+      "마감일": "2026-10-23",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179505",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 하반기 과천시 창업지원센터 스마트오피스 입주기업 모집 공고",
+      "주관부처": "과천시 창업지원센터",
+      "마감일": "2026-10-25",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179529",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[유한양행 X 서울창조경제혁신센터] 2026 K-Bio Insight Forum : 현장에서 만나는 바이오·제약 산업의 성장과 혁신",
+      "주관부처": "서울창조경제혁신센터",
+      "마감일": "2026-10-28",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179511",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 웰컴 투 팁스 7차 참가기업 모집 (제주권)",
+      "주관부처": "(주)로우파트너스",
+      "마감일": "2026-10-28",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179535",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[온라인·무료] 재고·코딩·PG심사 없이, 오늘 여는 내 쇼핑몰",
+      "주관부처": "스쿨모아 주식회사",
+      "마감일": "2026-10-29",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179521",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "글로벌 진출을 위한 법인 전략과 창업가 네트워킹 「To Flip or Not to Flip 참가자 모집",
+      "주관부처": "The Bridge Circle (TBC)",
+      "마감일": "2026-10-29",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179534",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 서울핀테크랩 FIN-오픈이노베이션 Meep-up Day 10회차 - DB손해보험",
+      "주관부처": "서울핀테크랩",
+      "마감일": "2026-11-02",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179531",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 여성CEO 비즈니스 아카데미 경상권역 시즌 2",
+      "주관부처": "한국여성경제인협회",
+      "마감일": "2026-11-04",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179538",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 고양시 자금조달 계획 특강 & 네트워킹",
+      "주관부처": "고양산업진흥원",
+      "마감일": "2026-11-06",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179536",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "(경남센터) 2026년 제9회 제대군인 창업 워크숍 개최 안내",
+      "주관부처": "국가보훈부",
+      "마감일": "2026-11-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179520",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[해수부] 2026년 해양수산 통합데모데이 참가자 모집",
+      "주관부처": "부산지역대학연합기술지주(주)",
+      "마감일": "2026-11-12",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179533",
+      "수집일시": "2026-10-19 05:50"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "KETI 파트너쉽 대덕특구 연구소기업",
+      "주관부처": "연구개발특구진흥재단",
+      "마감일": "2026-11-15",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179528",
+      "수집일시": "2026-10-19 05:50"
     }
   ]
 }
