@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-20T09:43:09.238092",
-  "total": 9075,
-  "new_today": 35,
+  "updated_at": "2026-10-21T05:47:51.761677",
+  "total": 9084,
+  "new_today": 9,
   "items": [
     {
       "소스": "교육부_공지사항",
@@ -72602,6 +72602,78 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000127340",
       "수집일시": "2026-10-20 09:43"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "충북테크노파크 차세대에너지 스타트업 DEMO DAY",
+      "주관부처": "주식회사 내비온파트너스",
+      "마감일": "2026-10-21",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179537",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 스타트업 법률지원사업 울산광역시 법률상담회 참여 기업 모집 안내",
+      "주관부처": "창업진흥원 원스톱지원실",
+      "마감일": "2026-11-02",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179572",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 스타트업, 중소기업, 소상공인을 위한 M&A 전략 세미나",
+      "주관부처": "광진경제허브센터",
+      "마감일": "2026-11-04",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179557",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[GBSA] 2026 판교스타트업 투자교류회 제 4차 투자교류회",
+      "주관부처": "㈜내비온파트너스",
+      "마감일": "2026-11-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179554",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 TEL VENTURE CAPITAL X 충남창조경제혁신센터 Nexus Connect 투자 밋업 데이",
+      "주관부처": "(재)충남창조경제혁신센터 대표이사",
+      "마감일": "2026-11-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179543",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "AI 활용 소상공인 및 전통시장 매니저  실무 역량 과정 참가자 모집",
+      "주관부처": "경남지방중소벤처기업청",
+      "마감일": "2026-11-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179552",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2027년 상반기 「IBK창공(創工)」혁신창업기업 모집",
+      "주관부처": "IBK기업은행",
+      "마감일": "2026-11-13",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179542",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 글로벌 진출 - 글로벌 진출과 협력 네트워크 확장 전략",
+      "주관부처": "서울창업허브 창동",
+      "마감일": "2026-11-17",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179555",
+      "수집일시": "2026-10-21 05:47"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[인탑스 액셀러레이팅 6기 모집] 제품 디자인·설계·양산부터 IR까지! 하드웨어 스타트업 올인원 스케일업",
+      "주관부처": "인탑스 주식회사",
+      "마감일": "2026-11-22",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179558",
+      "수집일시": "2026-10-21 05:47"
     }
   ]
 }
