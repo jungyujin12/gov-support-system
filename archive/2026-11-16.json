@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-16T07:44:11.663938",
+  "generated_at": "2026-11-16T13:14:01.907522",
   "date": "2026-11-16",
-  "total": 2408,
+  "total": 2414,
   "sources": {
     "기업마당": 1330,
     "K-Startup": 1000,
-    "교육부_사업공고": 48,
-    "교육부_공지사항": 30
+    "교육부_공지사항": 30,
+    "교육부_사업공고": 29
   },
   "items": [
     {
@@ -19272,6 +19272,54 @@
       "마감일": "",
       "상세링크": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000117626",
       "수집일시": "2026-11-16 07:44"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 인문·기술 융합 네트워크 ‘Thinking Day’ 2차 참가자 모집",
+      "주관부처": "단국C-앵커사업단",
+      "마감일": "2026-11-16",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179770",
+      "수집일시": "2026-11-16 13:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026 광명시 기업박람회 (GM TECH EXPO 2026)",
+      "주관부처": "광명시청",
+      "마감일": "2026-11-19",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179804",
+      "수집일시": "2026-11-16 13:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "제79회 단디벤처포럼 [2026 단디벤처 투자로드쇼] 일반참가자 모집",
+      "주관부처": "단디벤처포럼",
+      "마감일": "2026-11-19",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179811",
+      "수집일시": "2026-11-16 13:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "[충남] 2026 충남 앵커 산학프로젝트 멘토링 참여기업 모집(6개 대학 교수 1:1 기술 멘토링, 무료)",
+      "주관부처": "단국대학교 천안캠퍼스 산학협력단",
+      "마감일": "2026-11-20",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179805",
+      "수집일시": "2026-11-16 13:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2026년 IP거래 네트워크(IP-LINK)(원자력·조선·해양수산) 참가기업 모집",
+      "주관부처": "와이앤아처 주식회사",
+      "마감일": "2026-11-25",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179787",
+      "수집일시": "2026-11-16 13:14"
+    },
+    {
+      "소스": "K-Startup",
+      "사업명": "2027년 상반기 「IBK창공(創工) 서울대캠프」 모집 공고",
+      "주관부처": "IBK기업은행 IBK창공(創工) 서울대캠프",
+      "마감일": "2026-12-10",
+      "상세링크": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=179814",
+      "수집일시": "2026-11-16 13:14"
     }
   ]
 }
